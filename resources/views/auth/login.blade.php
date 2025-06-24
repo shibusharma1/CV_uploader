@@ -44,6 +44,9 @@
             padding: 50px;
             position: relative;
             overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
         
         .login-header::before {
@@ -72,12 +75,14 @@
             font-weight: 700;
             position: relative;
             z-index: 1;
+            margin-bottom: 1.5rem;
         }
         
         .login-header p {
             opacity: 0.9;
             position: relative;
             z-index: 1;
+            margin-bottom: 2rem;
         }
         
         .login-header .feature-item {
@@ -99,6 +104,9 @@
         .login-form {
             padding: 50px;
             position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
         
         .app-logo {
@@ -120,11 +128,12 @@
             font-weight: 700;
             color: var(--dark);
             margin-bottom: 30px;
+            text-align: center;
         }
         
         .form-floating {
             position: relative;
-            margin-bottom: 20px;
+            margin-bottom: 1.25rem;
         }
         
         .form-control {
@@ -159,7 +168,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin: 20px 0 30px;
+            margin: 1.5rem 0 2rem;
         }
         
         .form-check-input:checked {
@@ -185,7 +194,7 @@
         .decoration-line {
             display: flex;
             align-items: center;
-            margin: 30px 0;
+            margin: 2rem 0;
             color: var(--gray);
         }
         
@@ -270,12 +279,16 @@
         
         /* Responsive adjustments */
         @media (max-width: 991px) {
-            .login-header {
+            .login-header, .login-form {
                 padding: 30px;
             }
             
-            .login-form {
-                padding: 30px;
+            .login-header h1 {
+                font-size: 1.75rem;
+            }
+            
+            .login-header p {
+                font-size: 1rem;
             }
         }
         
@@ -284,17 +297,70 @@
                 border-radius: 15px;
             }
             
-            .login-header {
+            .login-header, .login-form {
                 padding: 40px 20px;
             }
             
             .login-header h1 {
-                font-size: 28px;
+                font-size: 1.5rem;
             }
             
             .login-form h2 {
-                font-size: 24px;
+                font-size: 1.5rem;
+                margin-bottom: 1.5rem;
             }
+            
+            .form-control {
+                height: 55px;
+            }
+            
+            .btn-login {
+                height: 55px;
+                font-size: 1rem;
+            }
+            
+            .remember-forgot {
+                margin: 1rem 0 1.5rem;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .login-container {
+                margin: 1rem;
+            }
+            
+            .login-header, .login-form {
+                padding: 30px 15px;
+            }
+            
+            .social-btn {
+                height: 45px;
+                font-size: 0.9rem;
+            }
+        }
+        
+        /* Alignment improvements */
+        .form-floating .bi {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            right: 15px;
+            z-index: 2;
+            pointer-events: none;
+        }
+        
+        .feature-item .d-flex {
+            align-items: center;
+        }
+        
+        .login-form-content {
+            max-width: 500px;
+            margin: 0 auto;
+            width: 100%;
+        }
+        
+        .social-login .row {
+            align-items: center;
         }
     </style>
 </head>
@@ -304,14 +370,14 @@
             <div class="row g-0">
                 <!-- Left Column - Visual Header -->
                 <div class="col-lg-6 d-none d-lg-flex">
-                    <div class="login-header h-100 d-flex flex-column justify-content-center">
-                        <div class="app-logo d-none d-md-flex">
+                    <div class="login-header h-100">
+                        <div class="app-logo">
                             <i class="bi bi-file-earmark-person"></i>
                             <span>CVUPLOADER</span>
                         </div>
                         
                         <h1 class="mb-4">Welcome Back</h1>
-                        <p class="lead mb-4">Sign in to continue your journey with CVUploader</p>
+                        <p class="lead mb-5">Sign in to continue your journey with CVUploader</p>
                         
                         <div class="mt-3">
                             <div class="feature-item">
@@ -340,7 +406,7 @@
                             </div>
                         </div>
                         
-                        <div class="brand-text mt-5">
+                        <div class="brand-text mt-auto">
                             Professional CV Management Platform
                         </div>
                     </div>
@@ -349,82 +415,79 @@
                 <!-- Right Column - Login Form -->
                 <div class="col-lg-6">
                     <div class="login-form">
-                        <div class="app-logo mb-4 d-none d-md-flex">
+                        <div class="app-logo mb-4 d-none d-md-flex d-lg-none">
                             <i class="bi bi-file-earmark-person"></i>
                             <span>CVUPLOADER</span>
                         </div>
                         
-                        <h2 class="text-center mb-4">Sign In to Your Account</h2>
-                        
-                        <!-- Login Form -->
-                        <form method="POST" action="{{ route('login') }}">
-                            @csrf
+                        <div class="login-form-content">
+                            <h2 class="mb-4">Sign In to Your Account</h2>
                             
-                            <!-- Email Field -->
-                            <div class="mb-3 form-floating position-relative">
-                                <input type="email" name="email" id="email" class="form-control" placeholder="Email Address" required>
-                                <label for="email">Email Address</label>
-                                <i class="bi bi-envelope position-absolute top-50 end-0 translate-middle-y me-3 text-muted"></i>
-                            </div>
-                            
-                            <!-- Password Field -->
-                            <div class="mb-3 form-floating position-relative">
-                                <input type="password" name="password" id="password" class="form-control" placeholder="Password" required>
-                                <label for="password">Password</label>
-                                <i class="bi bi-eye password-toggle position-absolute top-50 end-0 translate-middle-y me-3" id="togglePassword"></i>
-                            </div>
-                            
-                            <!-- Remember & Forgot Password -->
-                            <div class="remember-forgot">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="remember">
-                                    <label class="form-check-label" for="remember">
-                                        Remember me
-                                    </label>
+                            <!-- Login Form -->
+                            <form method="POST" action="{{ route('login') }}">
+                                @csrf
+                                
+                                <!-- Email Field -->
+                                <div class="mb-4 form-floating position-relative">
+                                    <input type="email" name="email" id="email" class="form-control" placeholder="Email Address" required>
+                                    <label for="email">Email Address</label>
+                                    <i class="bi bi-envelope text-muted"></i>
                                 </div>
-                                <div>
-                                    <a href="#" class="register-link">Forgot Password?</a>
+                                
+                                <!-- Password Field -->
+                                <div class="mb-4 form-floating position-relative">
+                                    <input type="password" name="password" id="password" class="form-control" placeholder="Password" required>
+                                    <label for="password">Password</label>
+                                    <i class="bi bi-eye password-toggle" id="togglePassword"></i>
                                 </div>
-                            </div>
-                            
-                            <!-- Submit Button -->
-                            <div class="d-grid mb-4">
-                                <button type="submit" class="btn btn-login btn-lg text-white">
-                                    <i class="bi bi-box-arrow-in-right me-2"></i>Sign In
-                                </button>
-                            </div>
-                            
-                            <!-- Divider -->
-                            <div class="decoration-line">
-                                <span>or continue with</span>
-                            </div>
-                            
-                            <!-- Social Login Options -->
-                            <div class="social-login">
-                                <div class="row g-3">
-                                    <div class="col-md-6">
-                                        <a href="#" class="social-btn google-btn text-decoration-none">
-                                            <i class="bi bi-google me-2"></i> Google
-                                        </a>
+                                
+                                <!-- Remember & Forgot Password -->
+                                <div class="remember-forgot">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="remember">
+                                        <label class="form-check-label" for="remember">
+                                            Remember me
+                                        </label>
                                     </div>
-                                    <div class="col-md-6">
-                                        <a href="#" class="social-btn facebook-btn text-decoration-none">
-                                            <i class="bi bi-facebook me-2"></i> Facebook
-                                        </a>
+                                    <div>
+                                        <a href="#" class="register-link">Forgot Password?</a>
                                     </div>
-                                    {{-- <div class="col-md-4">
-                                        <a href="#" class="social-btn twitter-btn text-decoration-none">
-                                            <i class="bi bi-twitter me-2"></i> Twitter
-                                        </a>
-                                    </div> --}}
                                 </div>
-                            </div>
-                            
-                            <!-- Registration Link -->
-                            <div class="text-center mt-5">
-                                <p class="mb-0">Don't have an account? <a href="{{ route('register') }}" class="register-link">Register Now</a></p>
-                            </div>
-                        </form>
+                                
+                                <!-- Submit Button -->
+                                <div class="d-grid mb-4">
+                                    <button type="submit" class="btn btn-login btn-lg text-white">
+                                        <i class="bi bi-box-arrow-in-right me-2"></i>Sign In
+                                    </button>
+                                </div>
+                                
+                                <!-- Divider -->
+                                <div class="decoration-line">
+                                    <span>or continue with</span>
+                                </div>
+                                
+                                <!-- Social Login Options -->
+                                <div class="social-login">
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <a href="#" class="social-btn google-btn text-decoration-none">
+                                                <i class="bi bi-google me-2"></i> Google
+                                            </a>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <a href="#" class="social-btn facebook-btn text-decoration-none">
+                                                <i class="bi bi-facebook me-2"></i> Facebook
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Registration Link -->
+                                <div class="text-center mt-5">
+                                    <p class="mb-0">Don't have an account? <a href="{{ route('register') }}" class="register-link">Register Now</a></p>
+                                </div>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>

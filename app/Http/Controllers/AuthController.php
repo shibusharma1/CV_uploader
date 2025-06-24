@@ -5,14 +5,18 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Auth\Events\Registered;
 
 class AuthController extends Controller
 {
-    public function showLoginForm() {
+    public function showLoginForm()
+    {
         return view('auth.login');
     }
 
-    public function login(Request $request) {
+    public function login(Request $request)
+    {
         $credentials = $request->validate([
             'email' => ['required', 'email'],
             'password' => ['required']
@@ -20,7 +24,10 @@ class AuthController extends Controller
 
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
-            
+            if (!Auth::user()->hasVerifiedEmail()) {
+                return redirect()->route('verification.notice');
+            }
+
             // Redirect to role-specific dashboard
             return redirect()->route($this->redirectUser(Auth::user()));
         }
@@ -30,30 +37,37 @@ class AuthController extends Controller
         ]);
     }
 
-    public function showRegisterForm() {
+    public function showRegisterForm()
+    {
         return view('auth.register');
     }
 
-    public function register(Request $request) {
+    public function register(Request $request)
+    {
         $request->validate([
-            'name' => ['required', 'string', 'max:255'],
+            'name_en' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'unique:users,email'],
             'password' => ['required', 'confirmed', 'min:6'],
         ]);
 
         $user = User::create([
-            'name' => $request->name,
+            'name_en' => $request->name_en,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'role' => 'student', // Default role as Teacher
+            'role' => 2,
         ]);
 
         // Auth::login($user);
 
-        return redirect()->route('login');
+        event(new Registered($user)); // triggers email verification
+
+        auth()->login($user);
+
+        return redirect(route('verification.notice'));
     }
 
-    public function logout(Request $request) {
+    public function logout(Request $request)
+    {
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
@@ -61,7 +75,8 @@ class AuthController extends Controller
     }
 
     // Helper function to redirect based on role
-    private function redirectUser($user) {
+    private function redirectUser($user)
+    {
         switch ($user->role) {
             case 'admin':
                 return 'admin.dashboard';

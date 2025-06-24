@@ -2,20 +2,39 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
-use App\Models\PersonalDetail;
+
+use App\Models\ApplicantAddress;
+use App\Models\ApplicantDocuments;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class User extends Authenticatable
+class User extends Authenticatable implements MustVerifyEmail
+    // class User extends Authenticatable implements MustVerifyEmail
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
 
-    public function personalDetails()
+    protected $fillable = [
+        'name_en',
+        'name_ne',
+        'image',
+        'email',
+        'phone',
+        'password',
+        'role',
+        'is_active',
+    ];
+
+    public function address()
     {
-        return $this->hasMany(PersonalDetail::class);
+        return $this->hasOne(ApplicantAddress::class, 'user_id');
+    }
+
+    public function documents()
+    {
+        return $this->hasOne(ApplicantDocuments::class, 'user_id');
     }
     /**
      * The table associated with the model.
@@ -28,11 +47,7 @@ class User extends Authenticatable
      *
      * @var list<string>
      */
-    protected $fillable = [
-        'name',
-        'email',
-        'password',
-    ];
+
 
     /**
      * The attributes that should be hidden for serialization.
