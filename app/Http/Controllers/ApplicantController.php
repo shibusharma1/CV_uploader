@@ -2,167 +2,110 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Applicant;
+use App\Models\Auth\Auth;
+use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use App\Models\ApplicantAddress;
 use App\Models\ApplicantDocuments;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Validation\Rule;
 
 class ApplicantController extends Controller
 {
     // Display paginated list of applicants
-    public function index()
+    // public function index()
+    // {
+    //     $applicants = User::with(['address', 'documents'])->paginate(20);
+    //     return view('applicants.index', compact('applicants'));
+    // }
+    public function index(Request $request)
     {
-        $applicants = User::with(['address', 'documents'])->paginate(20);
-        return view('applicants.index', compact('applicants'));
-    }
+        $query = Applicant::with(['user'])
+            ->when($request->filled('name'), fn($q) => $q->where('name_ne', 'like', "%{$request->name}%"))
+            ->when($request->filled('school_name'), fn($q) => $q->where('school_name', 'like', "%{$request->school_name}%"))
+            ->when($request->filled('scholarship_group'), fn($q) => $q->where('scholarship_group', $request->scholarship_group))
+            ->when($request->filled('status'), fn($q) => $q->where('status', $request->status))
+            ->when($request->filled('see_symbol_number'), fn($q) => $q->where('see_symbol_number', 'like', "%{$request->see_symbol_number}%"));
 
+        $applicants = $query->paginate(10)->withQueryString();
+
+        return view('admin.applicants.index', compact('applicants'));
+    }
     // Show form to create new applicant
     public function create()
     {
-        return view('applicants.create');
+        // Get the currently authenticated user with related models
+        $user = auth()->user()->load(['applicant', 'address', 'documents']);
+        return view('test', compact('user'));
     }
 
     // Store new applicant with related address & documents
-public function store(Request $request)
-{
-    // Define allowed user fields only
-    $userFields = [
-        'name_en','name_ne', 'password', 'phone', 'school_name', 'role',
-        'scholarship_group', 'dob_bs', 'dob_ad', 'gender',
-        'father_name', 'father_occupation', 'mother_name', 'mother_occupation',
-        'grandfather_name', 'grandfather_occupation', 'family_income_source',
-        'family_income_amount', 'see_school_type', 'desired_stream', 'see_symbol_number',
-        'see_gpa', 'see_school_address',
-    ];
-
-    // Extract user data from request
-    $userData = $request->only($userFields);
-
-    // Hash password before saving
-    if (isset($userData['password'])) {
-        $userData['password'] = bcrypt($userData['password']);
-    }
-
-    // Create user record
-    $user = User::create($userData);
-
-    // Define allowed address fields
-    $addressFields = [
-        'permanent_province',
-        'permanent_district',
-        'permanent_municipality',
-        'permanent_ward',
-        'temporary_province',
-        'temporary_district',
-        'temporary_municipality',
-        'temporary_ward',
-    ];
-
-    // Extract address data from request
-    $addressData = $request->only($addressFields);
-
-    // Save address related to user (assuming relation user->address())
-    $user->address()->create($addressData);
-
-    // File fields to handle
-    $fileFields = [
-        'see_gradesheet',
-        'community_school_document',
-        'citizenship_birth_certificate',
-        'disability_id_card',
-        'dalit_janjati_recommendation',
-        'bipanna_recommendation',
-        'physical_disability_certificate',
-        'movement_related_certificate',
-        'passport_size_photo',
-    ];
-
-    $documentData = [];
-
-    foreach ($fileFields as $field) {
-        if ($request->hasFile($field)) {
-            $file = $request->file($field);
-            // Store the file in 'applicants/documents' folder on 'public' disk
-            $path = $file->store('applicants/documents', 'public');
-            $documentData[$field] = $path;
+    public function store(Request $request)
+    {
+        // Check if the authenticated user already has an applicant record
+        if (auth()->user()->applicant) {
+            return redirect()->back()->with('error', 'You have already submitted an application.');
         }
-    }
+        // Get the authenticated user
+        $user = auth()->user(); // Using the already logged-in user, NOT creating new user
 
-    // Save documents related to user (assuming relation user->documents())
-    if (!empty($documentData)) {
-        $user->documents()->create($documentData);
-    }
+        // Define applicant-specific fields for 'applicants' table
+        $applicantFields = [
+            'name_ne',
+            'image',
+            'school_name',
+            'scholarship_group',
+            'dob_bs',
+            'dob_ad',
+            'gender',
+            'father_name',
+            'father_occupation',
+            'mother_name',
+            'mother_occupation',
+            'grandfather_name',
+            'grandfather_occupation',
+            'family_income_source',
+            'family_income_amount',
+            'see_school_type',
+            'desired_stream',
+            'see_symbol_number',
+            'see_gpa',
+            'see_school_address',
+        ];
 
-    return redirect()->route('home')->with('success', 'Applicant created successfully.');
-}
+        // Extract applicant data from request
+        $applicantData = $request->only($applicantFields);
+        $applicantData['user_id'] = $user->id; // Set foreign key to existing user
 
+        // Handle applicant profile image (optional)
+        if ($request->hasFile('image')) {
+            $file = $request->file('image');
+            $applicantData['image'] = $file->store('applicants/images', 'public');
+        }
 
-    // Show form for editing applicant
-    public function edit(User $applicant)
-    {
-        // eager load relations
-        $applicant->load(['address', 'documents']);
-        return view('applicants.edit', compact('applicant'));
-    }
+        // Create applicant record in 'applicants' table
+        $user->applicant()->create($applicantData);
 
-    // Update applicant data + address + documents
-    public function update(Request $request, User $applicant)
-    {
-        // Validate main user data
-        $validatedUser = $request->validate([
-            'name_en' => 'required|string|max:255',
-            'email'   => ['required','email', Rule::unique('users')->ignore($applicant->id)],
-            'phone'   => 'nullable|string|max:20',
-            'school_name' => 'required|string|max:255',
-            'role'    => 'nullable|integer|in:0,1,2',
-            'scholarship_group' => ['nullable', Rule::in([
-                'madhesi','vepata','jehendar','bipanna','janjati','apanga','shahid','dalit'
-            ])],
-            'dob_bs' => 'nullable|string|max:20',
-            'dob_ad' => 'nullable|date',
-            'gender' => 'nullable|integer|in:0,1,2',
+        // Define allowed address fields
+        $addressFields = [
+            'permanent_province',
+            'permanent_district',
+            'permanent_municipality',
+            'permanent_ward',
+            'temporary_province',
+            'temporary_district',
+            'temporary_municipality',
+            'temporary_ward',
+        ];
 
-            'father_name' => 'nullable|string|max:255',
-            'father_occupation' => 'nullable|string|max:255',
-            'mother_name' => 'nullable|string|max:255',
-            'mother_occupation' => 'nullable|string|max:255',
-            'grandfather_name' => 'nullable|string|max:255',
-            'grandfather_occupation' => 'nullable|string|max:255',
-            'family_income_source' => 'nullable|string|max:255',
-            'family_income_amount' => 'nullable|string|max:255',
-            'see_school_type' => 'nullable|string|max:255',
-            'desired_stream' => 'nullable|string|max:255',
-            'see_symbol_number' => 'nullable|string|max:255',
-            'see_gpa' => 'nullable|string|max:255',
-            'see_school_address' => 'nullable|string',
-        ]);
+        // Extract address data from request
+        $addressData = $request->only($addressFields);
 
-        // Update main user data
-        $applicant->update($validatedUser);
+        // Save address related to user (assuming user->address() relation exists)
+        $user->address()->create($addressData);
 
-        // Validate and update address
-        $addressData = $request->validate([
-            'permanent_province' => 'nullable|string|max:255',
-            'permanent_district' => 'nullable|string|max:255',
-            'permanent_municipality' => 'nullable|string|max:255',
-            'permanent_ward' => 'nullable|string|max:255',
-
-            'temporary_province' => 'nullable|string|max:255',
-            'temporary_district' => 'nullable|string|max:255',
-            'temporary_municipality' => 'nullable|string|max:255',
-            'temporary_ward' => 'nullable|string|max:255',
-        ]);
-
-        // Update or create address
-        $applicant->address()->updateOrCreate(
-            ['user_id' => $applicant->id],
-            $addressData
-        );
-
-        // Handle document file uploads - replace files if new ones uploaded
-        $documentData = [];
+        // Define file fields for document uploads
         $fileFields = [
             'see_gradesheet',
             'community_school_document',
@@ -175,27 +118,146 @@ public function store(Request $request)
             'passport_size_photo',
         ];
 
+        $documentData = [];
+
+        // Handle document file uploads
         foreach ($fileFields as $field) {
             if ($request->hasFile($field)) {
-                // Delete old file if exists
-                if ($applicant->documents && $applicant->documents->$field) {
-                    Storage::disk('public')->delete($applicant->documents->$field);
-                }
                 $file = $request->file($field);
-                $path = $file->store('applicants/documents', 'public');
-                $documentData[$field] = $path;
+                $documentData[$field] = $file->store('applicants/documents', 'public');
             }
         }
 
+        // Save documents related to user (assuming user->documents() relation exists)
         if (!empty($documentData)) {
-            $applicant->documents()->updateOrCreate(
-                ['user_id' => $applicant->id],
+            $user->documents()->create($documentData);
+        }
+
+        return redirect()->route('home')->with('success', 'Applicant created successfully.');
+    }
+
+
+
+    // Show form for editing applicant
+    public function edit(User $user)
+    {
+        // Eager load related models: applicant, address, documents
+        $user->load(['applicant', 'address', 'documents']);
+
+        return view('applicants.edit', compact('user'));
+    }
+
+
+    // Update applicant data + address + documents
+    public function update(Request $request, User $user)
+    {
+        // Update User table fields only if present in request
+        $userFields = ['name_en', 'email', 'phone', 'role'];
+        $userData = $request->only($userFields);
+
+        // Handle unique email validation (ignore current user's ID)
+        $request->validate([
+            'email' => ['required', 'email', Rule::unique('users')->ignore($user->id)]
+        ]);
+
+        // Update only the provided user fields (do not touch password)
+        $user->update($userData);
+
+        // Update Applicant table fields
+        $applicantFields = [
+            'name_ne',
+            'image',
+            'school_name',
+            'scholarship_group',
+            'dob_bs',
+            'dob_ad',
+            'gender',
+            'father_name',
+            'father_occupation',
+            'mother_name',
+            'mother_occupation',
+            'grandfather_name',
+            'grandfather_occupation',
+            'family_income_source',
+            'family_income_amount',
+            'see_school_type',
+            'desired_stream',
+            'see_symbol_number',
+            'see_gpa',
+            'see_school_address',
+        ];
+        $applicantData = $request->only($applicantFields);
+
+        // Handle image upload for applicant profile
+        if ($request->hasFile('image')) {
+            if ($user->applicant && $user->applicant->image) {
+                Storage::disk('public')->delete($user->applicant->image);
+            }
+            $applicantData['image'] = $request->file('image')->store('applicants/images', 'public');
+        }
+
+        // Update or create applicant record
+        $user->applicant()->updateOrCreate(
+            ['user_id' => $user->id],
+            $applicantData
+        );
+
+        // Update Address table fields
+        $addressFields = [
+            'permanent_province',
+            'permanent_district',
+            'permanent_municipality',
+            'permanent_ward',
+            'temporary_province',
+            'temporary_district',
+            'temporary_municipality',
+            'temporary_ward',
+        ];
+        $addressData = $request->only($addressFields);
+
+        // Update or create address record
+        $user->address()->updateOrCreate(
+            ['user_id' => $user->id],
+            $addressData
+        );
+
+        // Update Documents table fields
+        $fileFields = [
+            'see_gradesheet',
+            'community_school_document',
+            'citizenship_birth_certificate',
+            'disability_id_card',
+            'dalit_janjati_recommendation',
+            'bipanna_recommendation',
+            'physical_disability_certificate',
+            'movement_related_certificate',
+            'passport_size_photo',
+        ];
+
+        $documentData = [];
+
+        foreach ($fileFields as $field) {
+            if ($request->hasFile($field)) {
+                // Remove old file if exists
+                if ($user->documents && $user->documents->$field) {
+                    Storage::disk('public')->delete($user->documents->$field);
+                }
+                $documentData[$field] = $request->file($field)->store('applicants/documents', 'public');
+            }
+        }
+
+        // Update or create documents record
+        if (!empty($documentData)) {
+            $user->documents()->updateOrCreate(
+                ['user_id' => $user->id],
                 $documentData
             );
         }
 
         return redirect()->route('applicants.index')->with('success', 'Applicant updated successfully.');
     }
+
+
 
     // Delete applicant and related address/documents (cascade handled by DB)
     public function destroy(User $applicant)
@@ -204,5 +266,12 @@ public function store(Request $request)
 
         return redirect()->route('applicants.index')->with('success', 'Applicant deleted successfully.');
     }
+    public function show(Applicant $applicant)
+    {
+        $applicant->load(['user']);
+        return view('admin.applicants.show', compact('applicant'));
+    }
+
+
 }
 ?>

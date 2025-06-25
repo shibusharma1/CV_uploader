@@ -25,32 +25,21 @@
         </li>
         @endif
         @endauth
-        <li class="nav-item {{ request()->routeIs('users.*') ? 'active' : '' }}">
-            <a href="#" class="nav-link">
+        <li class="nav-item">
+            <a href="{{ route('users.index')}}" class="nav-link {{ request()->routeIs('users.*') ? 'active' : '' }}">
                 <i class="bi bi-people"></i>
                 Users
             </a>
         </li>
-        <li class="nav-item {{ request()->routeIs('users.*') ? 'active' : '' }}">
-            <a href="#" class="nav-link">
+        <li class="nav-item">
+            <a href="{{ route('applicants.index')}}" class="nav-link {{ request()->routeIs('applicants.*') ? 'active' : '' }}">
                 <i class="bi bi-file-earmark-text"></i>
                 Applications
             </a>
         </li>
-        {{-- <li class="nav-item">
-            <a href="#" class="nav-link">
-                <i class="bi bi-bell"></i>
-                Notifications
-            </a>
-        </li>
+
         <li class="nav-item">
-            <a href="#" class="nav-link">
-                <i class="bi bi-graph-up"></i>
-                Analytics
-            </a>
-        </li> --}}
-        <li class="nav-item {{ request()->routeIs('users.*') ? 'active' : '' }}">
-            <a href="#" class="nav-link">
+            <a href="{{ route('settings.edit')}}" class="nav-link  {{ request()->routeIs('settings.*') ? 'active' : '' }}">
                 <i class="bi bi-gear"></i>
                 Settings
             </a>

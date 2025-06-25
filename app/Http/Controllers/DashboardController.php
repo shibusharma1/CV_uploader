@@ -17,30 +17,38 @@ class DashboardController extends Controller
         $applicants = Applicant::count();
         $pendingApplicants = Applicant::where('status', 0)->count();
         // Pie Chart Data (User Genders)
-        $maleUsers = User::where('gender', 1)->count();
-        $femaleUsers = User::where('gender', 2)->count();
-        $otherUsers = User::where('gender', 0)->count();
+        $maleUsers = Applicant::where('gender', 0)->count();
+        $femaleUsers = Applicant::where('gender', 1)->count();
+        $otherUsers = Applicant::where('gender', 2)->count();
 
-        // Line Chart Data (Applicants last 7 days)
-        $last7Days = collect(range(0, 6))->map(function ($daysAgo) {
-            return now()->subDays($daysAgo)->toDateString();
-        })->reverse();
+        // Scholarship group options
+        $scholarshipGroups = [
+            'madhesi',
+            'vepata',
+            'jehendar',
+            'bipanna',
+            'janjati',
+            'apanga',
+            'shahid',
+            'dalit',
+        ];
+        $scholarshipCounts = [];
 
-        $applicantsLast7Days = $last7Days->map(function ($date) {
-        return Applicant::whereDate('created_at', $date)->count();
-        });
+        foreach ($scholarshipGroups as $group) {
+            $scholarshipCounts[] = Applicant::where('scholarship_group', $group)->count();
+        }
 
-return view('admin.dashboard', [
-    'user' => Auth::user(),
-    'users' => $users,
-    'applicants' => $applicants,
-    'pendingApplicants' => $pendingApplicants,
-    'maleUsers' => $maleUsers,
-    'femaleUsers' => $femaleUsers,
-    'otherUsers' => $otherUsers,
-    'last7Days' => $last7Days,
-    'applicantsLast7Days' => $applicantsLast7Days,
-]);
+        return view('admin.dashboard', [
+            'user' => Auth::user(),
+            'users' => $users,
+            'applicants' => $applicants,
+            'pendingApplicants' => $pendingApplicants,
+            'maleUsers' => $maleUsers,
+            'femaleUsers' => $femaleUsers,
+            'otherUsers' => $otherUsers,
+            'scholarshipGroups'=> $scholarshipGroups,
+            'scholarshipCounts'=> $scholarshipCounts,
+        ]);
     }
 
     public function user()

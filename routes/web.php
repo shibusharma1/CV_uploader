@@ -1,13 +1,15 @@
 <?php
 
-use App\Http\Controllers\AdminController;
 use App\Models\Auth\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\UserContoller;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\SettingController;
 use App\Http\Controllers\ApplicantController;
 use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\PersonalDetailController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 
 Route::get('/', function () {
@@ -17,14 +19,26 @@ Route::get('/', function () {
 Route::get('/test', function () {
     return view('test');
 });
-    Route::prefix('applicants')->group(function () {
-        Route::get('/', [ApplicantController::class, 'index'])->name('applicants.index');       // List all applicants
-        Route::get('/create', [ApplicantController::class, 'create'])->name('applicants.create'); // Show create form
-        Route::post('/', [ApplicantController::class, 'store'])->name('applicants.store');      // Store new applicant
-        Route::get('/{applicant}/edit', [ApplicantController::class, 'edit'])->name('applicants.edit'); // Edit form
-        Route::put('/{applicant}', [ApplicantController::class, 'update'])->name('applicants.update');   // Update applicant
-        Route::delete('/{applicant}', [ApplicantController::class, 'destroy'])->name('applicants.destroy'); // Delete applicant
-    });
+Route::prefix('applicants')->group(function () {
+    Route::get('/', [ApplicantController::class, 'index'])->name('applicants.index');       // List all applicants
+    Route::get('/create', [ApplicantController::class, 'create'])->name('applicants.create'); // Show create form
+    Route::post('/', [ApplicantController::class, 'store'])->name('applicants.store');      // Store new applicant
+    Route::get('/{applicant}/edit', [ApplicantController::class, 'edit'])->name('applicants.edit'); // Edit form
+    Route::put('/{applicant}', [ApplicantController::class, 'update'])->name('applicants.update');   // Update applicant
+    Route::delete('/{applicant}', [ApplicantController::class, 'destroy'])->name('applicants.destroy'); // Delete applicant
+    Route::get('/show/{applicant}', [ApplicantController::class,'show'])->name('applicants.show'); // Show applicant details
+
+});
+
+Route::resource('users', UserController::class);
+// Optional: a separate route for status toggle
+Route::patch('users/{user}/toggle-status', [UserController::class, 'toggleStatus'])->name('users.toggle-status');
+
+Route::get('/settings', [SettingController::class, 'edit'])->name('settings.edit');
+Route::post('/settings', [SettingController::class, 'update'])->name('settings.update');
+
+
+
 
 // Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login')->middleware('guest');
 // Route::post('/login', [AuthController::class, 'login']);
@@ -67,12 +81,12 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::get('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth');
 
 // Dashboard (only for verified users)
-Route::middleware(['auth'])->group(function() {
- Route::get('/dashboard/user', [DashboardController::class, 'user'])->name('user.dashboard');
+Route::middleware(['auth'])->group(function () {
+    Route::get('/dashboard/user', [DashboardController::class, 'user'])->name('user.dashboard');
 
 });
- Route::get('/dashboard/admin', [DashboardController::class, 'admin'])->name('admin.dashboard');
- Route::resource('admins', AdminController::class);
+Route::get('/dashboard/admin', [DashboardController::class, 'admin'])->name('admin.dashboard');
+Route::resource('admins', AdminController::class);
 
 // Email Verification Routes
 Route::get('/email/verify', function () {

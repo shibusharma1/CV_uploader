@@ -27,6 +27,10 @@ class User extends Authenticatable implements MustVerifyEmail
         'is_active',
     ];
 
+    public function applicant()
+    {
+        return $this->hasOne(Applicant::class);
+    }
     public function address()
     {
         return $this->hasOne(ApplicantAddress::class, 'user_id');

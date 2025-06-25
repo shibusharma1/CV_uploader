@@ -501,7 +501,7 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#" data-section="cvs">
+                    <a class="nav-link" href="" data-section="cvs">
                         <i class="bi bi-file-earmark"></i>
                         <span class="link-text">My CVs</span>
                     </a>
@@ -640,7 +640,7 @@
                             </div>
                         </div>
                     </div>
-                    
+                    <a class="btn btn-outline-success" href="{{ route('applicants.create')}}">ADD</a>
                     <!-- Current CV Status -->
                     <div class="row">
                         <div class="col-lg-8">
