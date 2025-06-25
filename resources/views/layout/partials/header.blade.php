@@ -1,39 +1,33 @@
-<!-- Header -->
-<header>
-    <div class="container">
-        <nav class="navbar">
-            <div class="logo">
-                <i class="fas fa-file-contract"></i>
-                <h1>CV Uploader</h1>
-            </div>
-            <ul class="nav-links">
-                <li><a href="#">Home</a></li>
-                <li><a href="#how-it-works">How It Works</a></li>
-                <li><a href="#">Features</a></li>
-                {{-- <li><a href="#">Pricing</a></li> --}}
-                <li><a href="#">Contact</a></li>
-            </ul>
-            @auth
-            <div class="auth-buttons">
-                <div class="dropdown">
-                    <a href="#" class="btn btn-outline dropdown-toggle" id="userDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        {{ strtok(Auth::user()->name_en, ' ') }}
-                    </a>
-                    <div class="dropdown-menu" aria-labelledby="userDropdown" style="display: none;">
-                        <a class="dropdown-item" href="#">Profile</a>
-                        <a class="dropdown-item" href="{{ route('logout') }}">Logout</a>
-                    </div>
+    <div>
+        <div class="topbar-main">
+            <div class="logo-text-section">
+                <div class="logo-container">
+                    <!-- Placeholder for Emblem of Nepal -->
+                    <img src="{{ asset('Biratnagar_logo.png') }}" alt="नेपालको प्रतीक चिन्ह">
+                </div>
+                <div class="text-content">
+                    <h1 class="main-heading">विराटनगर महानगरपालिका, नगर कार्यपालिकाको कार्यालय</h1>
+                    <h2 class="sub-heading">Government of Nepal</h2>
                 </div>
             </div>
-
-
-
-            @else
-            <div class="auth-buttons">
-                <a href="{{ route('login') }}" class="btn btn-outline">Login</a>
-                <a href="{{ route('register') }}" class="btn btn-primary">Register</a>
+            <div class="flag-container">
+                <!-- Placeholder for Nepal Flag -->
+                <img src="{{ asset('flag.gif') }}" alt="नेपालको झण्डा">
             </div>
-            @endauth
-        </nav>
+        </div>
+
+        <!-- Scrolling Marquee Loop -->
+        <div class="marquee-container">
+            <div class="marquee-content">
+                <span class="marquee-text">
+                    🎓 कडा परिश्रम गर्नुहोस्, अवसर तपाईंको प्रतीक्षा गरिरहेको छ। | 📢 छात्रवृत्तिका लागि आवेदन खुला छ – आफ्नो भविष्य आजै निर्माण गर्नुहोस्!
+                </span>
+                <span class="marquee-text">
+                    🎓 कडा परिश्रम गर्नुहोस्, अवसर तपाईंको प्रतीक्षा गरिरहेको छ। | 📢 छात्रवृत्तिका लागि आवेदन खुला छ – आफ्नो भविष्य आजै निर्माण गर्नुहोस्!
+                </span>
+                <span class="marquee-text">
+                    🎓 कडा परिश्रम गर्नुहोस्, अवसर तपाईंको प्रतीक्षा गरिरहेको छ। | 📢 छात्रवृत्तिका लागि आवेदन खुला छ – आफ्नो भविष्य आजै निर्माण गर्नुहोस्!
+                </span>
+            </div>
+        </div>
     </div>
-</header>
