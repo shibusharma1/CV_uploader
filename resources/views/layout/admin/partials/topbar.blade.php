@@ -22,8 +22,8 @@
                 <div class="dropdown user-dropdown">
                     <button class="btn dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown"
                         aria-expanded="false">
-                        <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Admin">
-                        <span>Admin User</span>
+                        <img src="{{asset('Biratnagar_logo.png') }}" alt="{{ Auth::user()->name_en }}">
+                        <span>{{ Auth::user()->name_en }}</span>
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                         <li><a class="dropdown-item" href="#"><i class="bi bi-person me-2"></i> Profile</a></li>

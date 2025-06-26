@@ -81,8 +81,12 @@ class ApplicantController extends Controller
         // Handle applicant profile image (optional)
         if ($request->hasFile('image')) {
             $file = $request->file('image');
-            $applicantData['image'] = $file->store('applicants/images', 'public');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $file->move(public_path('applicants/images'), $filename);
+
+            $applicantData['image'] = 'applicants/images/' . $filename; // Save relative path for asset()
         }
+
 
         // Create applicant record in 'applicants' table
         $user->applicant()->create($applicantData);
@@ -124,9 +128,13 @@ class ApplicantController extends Controller
         foreach ($fileFields as $field) {
             if ($request->hasFile($field)) {
                 $file = $request->file($field);
-                $documentData[$field] = $file->store('applicants/documents', 'public');
+                $filename = time() . '_' . $file->getClientOriginalName();
+                $file->move(public_path('applicants/documents'), $filename);
+
+                $documentData[$field] = 'applicants/documents/' . $filename; // save relative path
             }
         }
+
 
         // Save documents related to user (assuming user->documents() relation exists)
         if (!empty($documentData)) {
@@ -189,12 +197,11 @@ class ApplicantController extends Controller
         $applicantData = $request->only($applicantFields);
 
         // Handle image upload for applicant profile
-        if ($request->hasFile('image')) {
-            if ($user->applicant && $user->applicant->image) {
-                Storage::disk('public')->delete($user->applicant->image);
-            }
-            $applicantData['image'] = $request->file('image')->store('applicants/images', 'public');
-        }
+        $file = $request->file('image');
+        $filename = time() . '_' . $file->getClientOriginalName();
+        $file->move(public_path('applicants/images'), $filename);
+        $applicantData['image'] = 'applicants/images/' . $filename;
+
 
         // Update or create applicant record
         $user->applicant()->updateOrCreate(
@@ -240,9 +247,17 @@ class ApplicantController extends Controller
             if ($request->hasFile($field)) {
                 // Remove old file if exists
                 if ($user->documents && $user->documents->$field) {
-                    Storage::disk('public')->delete($user->documents->$field);
+                    $oldPath = public_path($user->documents->$field);
+                    if (file_exists($oldPath)) {
+                        unlink($oldPath);
+                    }
                 }
-                $documentData[$field] = $request->file($field)->store('applicants/documents', 'public');
+
+                $file = $request->file($field);
+                $filename = time() . '_' . $field . '_' . $file->getClientOriginalName();
+                $file->move(public_path('applicants/documents'), $filename);
+
+                $documentData[$field] = 'applicants/documents/' . $filename; // Save relative path
             }
         }
 

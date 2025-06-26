@@ -39,7 +39,7 @@
         </li>
 
         <li class="nav-item">
-            <a href="{{ route('settings.edit')}}" class="nav-link  {{ request()->routeIs('settings.*') ? 'active' : '' }}">
+            <a href="{{ route('settings.edit') }}" class="nav-link  {{ request()->routeIs('settings.*') ? 'active' : '' }}">
                 <i class="bi bi-gear"></i>
                 Settings
             </a>

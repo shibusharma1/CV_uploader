@@ -29,16 +29,34 @@ class SettingController extends Controller
         ]);
 
         $setting = Setting::first() ?? new Setting();
-
         if ($request->hasFile('logo')) {
-            if ($setting->logo) Storage::delete($setting->logo);
-            $validated['logo'] = $request->file('logo')->store('settings', 'public');
+            if ($setting->logo) {
+                $oldLogoPath = public_path($setting->logo);
+                if (file_exists($oldLogoPath)) {
+                    unlink($oldLogoPath);
+                }
+            }
+
+            $file = $request->file('logo');
+            $filename = time() . '_logo_' . $file->getClientOriginalName();
+            $file->move(public_path('settings'), $filename);
+            $validated['logo'] = 'settings/' . $filename;
         }
 
         if ($request->hasFile('fav_icon')) {
-            if ($setting->fav_icon) Storage::delete($setting->fav_icon);
-            $validated['fav_icon'] = $request->file('fav_icon')->store('settings', 'public');
+            if ($setting->fav_icon) {
+                $oldFavIconPath = public_path($setting->fav_icon);
+                if (file_exists($oldFavIconPath)) {
+                    unlink($oldFavIconPath);
+                }
+            }
+
+            $file = $request->file('fav_icon');
+            $filename = time() . '_fav_' . $file->getClientOriginalName();
+            $file->move(public_path('settings'), $filename);
+            $validated['fav_icon'] = 'settings/' . $filename;
         }
+
 
         $setting->fill($validated)->save();
 

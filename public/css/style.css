@@ -1,192 +1,219 @@
+body {
+    margin: 0;
+    font-family: "Inter", sans-serif;
+    overflow-x: hidden; /* Prevent horizontal scroll due to marquee */
+}
 
-        body {
-            margin: 0;
-            font-family: 'Inter', sans-serif;
-            overflow-x: hidden; /* Prevent horizontal scroll due to marquee */
-        }
+/* Top section styling */
+.topbar-main {
+    height: 22vh; /* h-[22vh] */
+    background-color: white; /* bg-white */
+    color: white; /* text-white - though overridden by specific text colors */
+    padding-left: 1.5rem; /* px-6 */
+    padding-right: 1.5rem; /* px-6 */
+    display: flex;
+    justify-content: space-between; /* justify-between */
+    align-items: center; /* items-center */
+    box-sizing: border-box; /* Ensure padding is included in height */
+}
 
-        /* Top section styling */
-        .topbar-main {
-            height: 22vh; /* h-[22vh] */
-            background-color: white; /* bg-white */
-            color: white; /* text-white - though overridden by specific text colors */
-            padding-left: 1.5rem; /* px-6 */
-            padding-right: 1.5rem; /* px-6 */
-            display: flex;
-            justify-content: space-between; /* justify-between */
-            align-items: center; /* items-center */
-            box-sizing: border-box; /* Ensure padding is included in height */
-        }
+.logo-text-section {
+    height: 100%; /* h-full */
+    display: flex;
+    justify-content: center; /* justify-center */
+    align-items: center; /* items-center */
+    gap: 0.5rem; /* gap-2 */
+}
+@media (min-width: 640px) {
+    /* sm: breakpoint */
+    .logo-text-section {
+        gap: 1rem; /* sm:gap-4 */
+    }
+}
 
-        .logo-text-section {
-            height: 100%; /* h-full */
-            display: flex;
-            justify-content: center; /* justify-center */
-            align-items: center; /* items-center */
-            gap: 0.5rem; /* gap-2 */
-        }
-        @media (min-width: 640px) { /* sm: breakpoint */
-            .logo-text-section {
-                gap: 1rem; /* sm:gap-4 */
-            }
-        }
+.logo-container {
+    height: 10rem; /* h-40 */
+    width: 10rem; /* w-40 */
+    display: flex; /* Ensure image centering */
+    justify-content: center;
+    align-items: center;
+}
+@media (min-width: 640px) {
+    /* sm: breakpoint */
+    .logo-container {
+        width: 7.5rem; /* sm:w-30 (120px) */
+        height: 7.5rem; /* sm:h-30 (120px) */
+    }
+}
+.logo-container img {
+    height: 100%; /* h-full */
+    width: 100%; /* w-full */
+    object-fit: contain; /* object-contain */
+}
 
-        .logo-container {
-            height: 10rem; /* h-40 */
-            width: 10rem; /* w-40 */
-            display: flex; /* Ensure image centering */
-            justify-content: center;
-            align-items: center;
-        }
-        @media (min-width: 640px) { /* sm: breakpoint */
-            .logo-container {
-                width: 7.5rem; /* sm:w-30 (120px) */
-                height: 7.5rem; /* sm:h-30 (120px) */
-            }
-        }
-        .logo-container img {
-            height: 100%; /* h-full */
-            width: 100%; /* w-full */
-            object-fit: contain; /* object-contain */
-        }
+.text-content {
+    display: flex;
+    flex-direction: column; /* flex-col */
+    align-items: flex-start; /* items-start */
+    text-align: left; /* text-left */
+}
 
-        .text-content {
-            display: flex;
-            flex-direction: column; /* flex-col */
-            align-items: flex-start; /* items-start */
-            text-align: left; /* text-left */
-        }
+.main-heading {
+    font-size: 1.25rem; /* text-xl */
+    font-weight: bold;
+    color: #114499; /* text-[#114499] */
+    margin-bottom: 0.25rem; /* mb-1 */
+    text-align: left; /* text-left */
+}
+@media (min-width: 640px) {
+    /* sm: breakpoint */
+    .main-heading {
+        font-size: 1.5rem; /* sm:text-2xl */
+    }
+}
 
-        .main-heading {
-            font-size: 1.25rem; /* text-xl */
-            font-weight: bold;
-            color: #114499; /* text-[#114499] */
-            margin-bottom: 0.25rem; /* mb-1 */
-            text-align: left; /* text-left */
-        }
-        @media (min-width: 640px) { /* sm: breakpoint */
-            .main-heading {
-                font-size: 1.5rem; /* sm:text-2xl */
-            }
-        }
+.sub-heading {
+    font-size: 1.25rem; /* text-xl */
+    font-weight: 600; /* font-semibold */
+    color: #dc3545; /* text-[#DC3545] */
+    margin-bottom: 0.25rem; /* mb-1 */
+    text-align: center; /* text-center */
+}
+@media (min-width: 640px) {
+    /* sm: breakpoint */
+    .sub-heading {
+        font-size: 1.25rem; /* sm:text-xl */
+    }
+}
 
-        .sub-heading {
-            font-size: 1.25rem; /* text-xl */
-            font-weight: 600; /* font-semibold */
-            color: #DC3545; /* text-[#DC3545] */
-            margin-bottom: 0.25rem; /* mb-1 */
-            text-align: center; /* text-center */
-        }
-        @media (min-width: 640px) { /* sm: breakpoint */
-            .sub-heading {
-                font-size: 1.25rem; /* sm:text-xl */
-            }
-        }
+.flag-container {
+    display: none; /* hidden */
+    justify-content: center; /* justify-center */
+    width: 6rem; /* w-24 */
+    height: 6rem; /* h-24 */
+}
+@media (min-width: 640px) {
+    /* sm: breakpoint */
+    .flag-container {
+        display: flex; /* sm:flex */
+    }
+}
+.flag-container img {
+    height: 100%; /* h-full */
+    object-fit: contain; /* object-contain */
+}
 
-        .flag-container {
-            display: none; /* hidden */
-            justify-content: center; /* justify-center */
-            width: 6rem; /* w-24 */
-            height: 6rem; /* h-24 */
-        }
-        @media (min-width: 640px) { /* sm: breakpoint */
-            .flag-container {
-                display: flex; /* sm:flex */
-            }
-        }
-        .flag-container img {
-            height: 100%; /* h-full */
-            object-fit: contain; /* object-contain */
-        }
+/* Marquee section styling */
+.marquee-container {
+    height: 8vh; /* h-[8vh] */
+    background-color: #114499; /* bg-[#114499] */
+    overflow: hidden; /* overflow-hidden */
+    position: relative; /* relative */
+    display: flex;
+    justify-content: center; /* justify-center */
+    align-items: center; /* items-center */
+}
 
-        /* Marquee section styling */
-        .marquee-container {
-            height: 8vh; /* h-[8vh] */
-            background-color: #114499; /* bg-[#114499] */
-            overflow: hidden; /* overflow-hidden */
-            position: relative; /* relative */
-            display: flex;
-            justify-content: center; /* justify-center */
-            align-items: center; /* items-center */
-        }
+.marquee-content {
+    position: absolute; /* absolute */
+    display: flex;
+    white-space: nowrap; /* whitespace-nowrap */
+    animation: marquee-loop 20s linear infinite; /* animate-marquee-loop */
+    width: 300%; /* Adjust width for smooth looping based on content duplication */
+}
 
-        .marquee-content {
-            position: absolute; /* absolute */
-            display: flex;
-            white-space: nowrap; /* whitespace-nowrap */
-            animation: marquee-loop 20s linear infinite; /* animate-marquee-loop */
-            width: 300%; /* Adjust width for smooth looping based on content duplication */
-        }
+.marquee-text {
+    color: white; /* text-white */
+    font-size: 1.125rem; /* text-lg */
+    font-weight: 500; /* font-medium */
+    padding-left: 0.5rem; /* px-2 */
+    padding-right: 0.5rem; /* px-2 */
+    flex-shrink: 0; /* Prevent text from shrinking */
+}
 
-        .marquee-text {
-            color: white; /* text-white */
-            font-size: 1.125rem; /* text-lg */
-            font-weight: 500; /* font-medium */
-            padding-left: 0.5rem; /* px-2 */
-            padding-right: 0.5rem; /* px-2 */
-            flex-shrink: 0; /* Prevent text from shrinking */
-        }
-
-        /* Custom animation for marquee */
-        @keyframes marquee-loop {
-          0% { transform: translateX(0); }
-          /* Calculate 100% transform based on content duplication and container width */
-          /* If there are 3 copies of content, and we want to loop seamlessly,
+/* Custom animation for marquee */
+@keyframes marquee-loop {
+    0% {
+        transform: translateX(0);
+    }
+    /* Calculate 100% transform based on content duplication and container width */
+    /* If there are 3 copies of content, and we want to loop seamlessly,
              we need to translate by 1/3rd of the total width (100% of one content block).
              Since width is 300%, 1/3 of that is 100% of the original content block width.
              So, -100% to effectively loop one full content block. */
-          100% { transform: translateX(-33.3333%); } /* Adjusted for 3 spans */
-        }
-   
-        .footer-container {
-            margin: 0;
-            font-family: 'Inter', sans-serif;
-            display: flex;
-            flex-direction: column;
-         
-        }
-        main {
-            flex-grow: 1; /* Allows main content to take up available space */
-        }
-        footer {
-            background-color: #114499; /* bg-[#114499] */
-            color: white; /* text-white */
-            padding-top: 1.5rem; /* py-6 */
-            padding-bottom: 1.5rem; /* py-6 */
-            margin-top: 2.5rem; /* mt-10 */
-            width: 100%;
-            box-sizing: border-box; /* Include padding in width */
-        }
-        .footer-content-container {
-            max-width: 48rem; /* max-w-4xl (768px) */
-            margin-left: auto; /* mx-auto */
-            margin-right: auto; /* mx-auto */
-            padding-left: 1rem; /* px-4 */
-            padding-right: 1rem; /* px-4 */
-            text-align: center; /* text-center */
-        }
-        @media (min-width: 640px) { /* sm: breakpoint */
-            .footer-content-container {
-                padding-left: 1.5rem; /* sm:px-6 */
-                padding-right: 1.5rem; /* sm:px-6 */
-            }
-        }
-        @media (min-width: 1024px) { /* lg: breakpoint */
-            .footer-content-container {
-                padding-left: 2rem; /* lg:px-8 */
-                padding-right: 2rem; /* lg:px-8 */
-            }
-        }
-        .footer-text-sm {
-            font-size: 0.875rem; /* text-sm */
-        }
-        .footer-text-xs {
-            font-size: 0.75rem; /* text-xs */
-        }
-        .mt-1 {
-            margin-top: 0.25rem; /* mt-1 */
-        }
-        .text-gray-300 {
-            color: #d1d5db; /* text-gray-300 */
-        }
-  
+    100% {
+        transform: translateX(-33.3333%);
+    } /* Adjusted for 3 spans */
+}
+
+/* navbar css */
+.navbar-nav .nav-link {
+    font-weight: 500;
+    margin-right: 10px;
+}
+.user-img {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+@media (max-width: 991px) {
+    .navbar-collapse {
+        background-color: #fff;
+        padding: 10px;
+        border-radius: 0 0 10px 10px;
+    }
+}
+
+.footer-container {
+    margin: 0;
+    font-family: "Inter", sans-serif;
+    display: flex;
+    flex-direction: column;
+}
+main {
+    flex-grow: 1; /* Allows main content to take up available space */
+}
+footer {
+    background-color: #114499; /* bg-[#114499] */
+    color: white; /* text-white */
+    padding-top: 1.5rem; /* py-6 */
+    padding-bottom: 1.5rem; /* py-6 */
+    /* margin-top: 2.5rem;  */
+    width: 100%;
+    box-sizing: border-box; /* Include padding in width */
+}
+.footer-content-container {
+    max-width: 48rem; /* max-w-4xl (768px) */
+    margin-left: auto; /* mx-auto */
+    margin-right: auto; /* mx-auto */
+    padding-left: 1rem; /* px-4 */
+    padding-right: 1rem; /* px-4 */
+    text-align: center; /* text-center */
+}
+@media (min-width: 640px) {
+    /* sm: breakpoint */
+    .footer-content-container {
+        padding-left: 1.5rem; /* sm:px-6 */
+        padding-right: 1.5rem; /* sm:px-6 */
+    }
+}
+@media (min-width: 1024px) {
+    /* lg: breakpoint */
+    .footer-content-container {
+        padding-left: 2rem; /* lg:px-8 */
+        padding-right: 2rem; /* lg:px-8 */
+    }
+}
+.footer-text-sm {
+    font-size: 0.875rem; /* text-sm */
+}
+.footer-text-xs {
+    font-size: 0.75rem; /* text-xs */
+}
+.mt-1 {
+    margin-top: 0.25rem; /* mt-1 */
+}
+.text-gray-300 {
+    color: #d1d5db; /* text-gray-300 */
+}

@@ -10,8 +10,13 @@ use Illuminate\Auth\Events\Registered;
 
 class AuthController extends Controller
 {
-    public function showLoginForm()
+    public function showLoginForm(Request $request)
     {
+        if (Auth::check()) {
+            Auth::logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+        }
         return view('auth.login');
     }
 
@@ -44,6 +49,7 @@ class AuthController extends Controller
 
     public function register(Request $request)
     {
+        // dd($request->all());
         $request->validate([
             'name_en' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'unique:users,email'],
@@ -80,9 +86,10 @@ class AuthController extends Controller
     private function redirectUser($user)
     {
         switch ($user->role) {
-            case 'admin':
+            case 0:
+            case 1:
                 return 'admin.dashboard';
-            case 'user':
+            case 2:
                 return 'user.dashboard';
             default:
                 abort(403, 'Unauthorized access');

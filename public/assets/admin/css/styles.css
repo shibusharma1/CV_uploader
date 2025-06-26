@@ -21,7 +21,7 @@
         #sidebar {
             width: var(--sidebar-width);
             /* background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%); */
-            background: #dcddde;
+            background: #fff;
             color: black !important;
             position: fixed;
             height: 100vh;
@@ -68,7 +68,7 @@
 
         .nav-link i {
             margin-right: 10px;
-            font-size: 18px;
+            font-size: 16px;
             width: 24px;
             text-align: center;
         }
@@ -169,6 +169,7 @@
         }
 
         .page-title {
+            font-size: 24px;
             font-weight: 700;
             color: var(--dark);
             margin-bottom: 0;
