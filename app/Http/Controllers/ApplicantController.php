@@ -39,7 +39,7 @@ class ApplicantController extends Controller
             ->distinct()
             ->get();
 
-        // If applicant exists
+        // If applicant exists  
         if ($applicant) {
             // Fetch with relationship if needed for view
             $applicants = Applicant::with('user')->where('user_id', auth()->id())->first();
@@ -85,7 +85,7 @@ class ApplicantController extends Controller
     // Store new applicant with related address & documents
     public function store(Request $request)
     {
-        dd($request->all());
+        // dd($request->all());
         // Check if the authenticated user already has an applicant record
         if (auth()->user()->applicant) {
             return redirect()->back()->with('error', 'You have already submitted an application.');
@@ -192,13 +192,19 @@ class ApplicantController extends Controller
 
 
     // Show form for editing applicant
-    public function edit(User $user)
+    public function edit()
     {
-        // Eager load related models: applicant, address, documents
-        $user->load(['applicant', 'address', 'documents']);
+        $user = auth()->user();
 
-        return view('applicants.edit', compact('user'));
+        // Fetch applicant with user relationship
+        $applicant = Applicant::with('user', 'address')->where('user_id', $user->id)->firstOrFail();
+
+        // Fetch distinct provinces for dropdown
+        $provinces = ProvinceData::select('STATE_CODE', 'STATE_NAME_NEP')->distinct()->get();
+
+        return view('user.applicants.edit', compact('user', 'applicant', 'provinces'));
     }
+
 
 
     // Update applicant data + address + documents
@@ -330,15 +336,22 @@ class ApplicantController extends Controller
     {
         $applicant = Applicant::with('user')->where('user_id', $id)->firstOrFail();
 
+        $provinces = ProvinceData::select('STATE_CODE', 'STATE_NAME_NEP')->distinct()->get();
+        $districts = ProvinceData::select('DISTRICT_CODE', 'DISTRICT_NAME_NEP')->distinct()->get();
+        $locals = ProvinceData::select('LOCAL_BODY_CODE', 'LOCAL_BODY_NAME_NEP')->distinct()->get();
+
+        $provinceMap = $provinces->pluck('STATE_NAME_NEP', 'STATE_CODE');
+        $districtMap = $districts->pluck('DISTRICT_NAME_NEP', 'DISTRICT_CODE');
+        $localMap = $locals->pluck('LOCAL_BODY_NAME_NEP', 'LOCAL_BODY_CODE');
 
         if (!$applicant) {
             return redirect()->back()->with('error', 'You haven\'t applied yet. Please apply first.');
         }
 
         if (in_array($applicant->user->role, [0, 1])) {
-            return view('admin.applicants.show', compact('applicant'));
+            return view('admin.applicants.show', compact('applicant', 'provinceMap', 'districtMap', 'localMap'));
         } else {
-            return view('user.applicants.show', compact('applicant'));
+            return view('user.applicants.show', compact('applicant', 'provinceMap', 'districtMap', 'localMap'));
         }
     }
 

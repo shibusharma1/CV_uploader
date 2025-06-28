@@ -1,13 +1,13 @@
-
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Scholarship Application Form</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-         <link rel="icon" type="image/png" href="{{ asset('Biratnagar_logo.png') }}">
+    <link rel="icon" type="image/png" href="{{ asset('Biratnagar_logo.png') }}">
 
     <style>
         body {
@@ -346,61 +346,81 @@
         </div>
 
         <h3 class="printable-section-title mb-2">७. ठेगानाः</h3>
+        {{-- स्थायी ठेगाना --}}
         <div class="printable-address-group mb-2">
             <h4 class="printable-section-title-line">क) स्थायी:</h4>
             <div class="printable-address-groups">
                 <div class="printable-field-value-tight">
                     <h3 class="printable-section-title-line">क) प्रदेशः</h3>
-                    <p class="printable-field-value"> {{ $applicant->address->permanent_province ?? 'N/A' }}</p>
+                    <p class="printable-field-value"> {{ $provinceMap[$applicant->user->address->permanent_province] ??
+                        'N/A' }}</p>
                 </div>
                 <div class="printable-field-value-tight">
                     <h3 class="printable-section-title-line">ख) जिल्लाः</h3>
-                    <p class="printable-field-value"> {{ $applicant->address->permanent_district ?? 'N/A' }}</p>
+                    <p class="printable-field-value"> {{ $districtMap[$applicant->user->address->permanent_district] ??
+                        'N/A' }}
+                    </p>
                 </div>
                 <div class="printable-field-value-tight">
                     <h3 class="printable-section-title-line">ग) स्थानीय तहः</h3>
-                    <p class="printable-field-value"> {{ $applicant->address->permanent_municipality ?? 'N/A' }}</p>
+                    <p class="printable-field-value"> {{ $localMap[$applicant->user->address->permanent_municipality] ??
+                        'N/A' }}</p>
                 </div>
                 <div class="printable-field-value-tight">
                     <h3 class="printable-section-title-line">घ) टोल:</h3>
-                    <p class="printable-field-value"> {{ $applicant->address->permanent_ward ?? 'N/A' }}</p>
+                    <p class="printable-field-value"> {{ $applicant->user->address->permanent_ward ?? 'N/A' }}</p>
                 </div>
             </div>
         </div>
 
         <div class="printable-address-group mb-2">
+            {{-- अस्थायी ठेगाना --}}
             <h4 class="printable-section-title-line">ख) अस्थायी :</h4>
             <div class="printable-address-groups">
                 <div class="printable-field-value-tight">
                     <h3 class="printable-section-title-line">क) प्रदेशः</h3>
-                    <p class="printable-field-value"> {{ $applicant->address->temporary_province ?? 'N/A' }}</p>
+                    <p class="printable-field-value"> {{ $provinceMap[$applicant->user->address->temporary_province] ??
+                        'N/A' }}
+                    </p>
                 </div>
                 <div class="printable-field-value-tight">
                     <h3 class="printable-section-title-line">ख) जिल्लाः</h3>
-                    <p class="printable-field-value"> {{ $applicant->address->temporary_district ?? 'N/A' }}</p>
+                    <p class="printable-field-value"> {{ $districtMap[$applicant->user->address->temporary_district] ??
+                        'N/A' }}
+                    </p>
                 </div>
                 <div class="printable-field-value-tight">
                     <h3 class="printable-section-title-line">ग) स्थानीय तहः</h3>
-                    <p class="printable-field-value"> {{ $applicant->address->temporary_municipality ?? 'N/A' }}</p>
+                    <p class="printable-field-value"> {{ $localMap[$applicant->user->address->temporary_municipality] ??
+                        'N/A' }}
+                    </p>
                 </div>
                 <div class="printable-field-value-tight">
                     <h3 class="printable-section-title-line">घ) टोल:</h3>
-                    <p class="printable-field-value"> {{ $applicant->address->temporary_ward ?? 'N/A' }}</p>
+                    <p class="printable-field-value"> {{ $applicant->user->address->temporary_ward ?? 'N/A' }}
+                    </p>
                 </div>
             </div>
         </div>
 
+
         <div class="printable-section-group-inline-label-value">
-            <p class="printable-field-value-inline-label">८. बुवाको नाम, थर: <span> {{ $applicant->father_name ?? 'N/A' }}</span></p>
-            <p class="printable-field-value-inline-label">पेशाः <span> {{ $applicant->father_occupation ?? 'N/A' }}</span></p>
+            <p class="printable-field-value-inline-label">८. बुवाको नाम, थर: <span> {{ $applicant->father_name ?? 'N/A'
+                    }}</span></p>
+            <p class="printable-field-value-inline-label">पेशाः <span> {{ $applicant->father_occupation ?? 'N/A'
+                    }}</span></p>
         </div>
         <div class="printable-section-group-inline-label-value">
-            <p class="printable-field-value-inline-label">९. आमाको नाम, थर : <span> {{ $applicant->mother_name ?? 'N/A' }}</span></p>
-            <p class="printable-field-value-inline-label">पेशाः <span> {{ $applicant->mother_occupation ?? 'N/A' }}</span></p>
+            <p class="printable-field-value-inline-label">९. आमाको नाम, थर : <span> {{ $applicant->mother_name ?? 'N/A'
+                    }}</span></p>
+            <p class="printable-field-value-inline-label">पेशाः <span> {{ $applicant->mother_occupation ?? 'N/A'
+                    }}</span></p>
         </div>
         <div class="printable-section-group-inline-label-value">
-            <p class="printable-field-value-inline-label">१०. बाजेको नाम, थरः <span>{{ $applicant->grandfather_name ?? 'N/A' }}</span></p>
-            <p class="printable-field-value-inline-label">पेशाः <span>{{ $applicant->grandfather_occupation ?? 'N/A' }}</span></p>
+            <p class="printable-field-value-inline-label">१०. बाजेको नाम, थरः <span>{{ $applicant->grandfather_name ??
+                    'N/A' }}</span></p>
+            <p class="printable-field-value-inline-label">पेशाः <span>{{ $applicant->grandfather_occupation ?? 'N/A'
+                    }}</span></p>
         </div>
 
         <div class="d-flex justify-content-between gap-3 mb-1">
@@ -454,17 +474,24 @@
         <div class="printable-applicant-info-bottom">
             <div>
                 <h3 class="printable-section-title mb-1">निवेदक</h3>
-                <p class="printable-field-value-half">नाम :  {{ $applicant->name_ne ?? 'N/A' }}</p>
+                <p class="printable-field-value-half">नाम : {{ $applicant->name_ne ?? 'N/A' }}</p>
                 <p class="printable-field-value-half">सही: <span class="signature-placeholder">Not Attached</span></p>
-                <p class="printable-field-value-full">मिति :  {{ $applicant->created_at ?? 'N/A' }}</p>
+                <p class="printable-field-value-full">मिति : {{ $applicant->created_at ?? 'N/A' }}</p>
             </div>
         </div>
     </div>
 
+    @if($applicant->status == 0)
     <div class="text-center no-print">
-        <button class="btn btn-primary" onclick="window.print()">Print Application Form</button>
+        <a href="{{ route('applicants.edit', $applicant->id) }}" class="btn btn-primary">Edit Application</a>
     </div>
-  
+    @else
+    <div class="text-center no-print">
+        <button class="btn btn-primary" onclick="window.print()">Print Application</button>
+    </div>
+    @endif
+
+
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous">

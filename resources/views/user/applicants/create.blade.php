@@ -837,30 +837,62 @@
     });
 
     // copy permanent to temporary
+    // function copyPermanentToTemporary() {
+    //     if (document.getElementById('sameAddressCheckbox').checked) {
+    //         document.getElementById('temp_province').value = document.getElementById('perm_province').value;
+    //         loadDistricts(document.getElementById('perm_province').value, 'temp_district');
+
+    //         setTimeout(() => {
+    //             document.getElementById('temp_district').value = document.getElementById('perm_district').value;
+    //             loadLocalBodies(document.getElementById('perm_district').value, 'temp_local_level');
+    //         }, 300);
+
+    //         setTimeout(() => {
+    //             document.getElementById('temp_local_level').value = document.getElementById('perm_local_level').value;
+    //             document.getElementById('temp_tole').value = document.getElementById('perm_tole').value;
+    //         }, 600);
+    //     } else {
+    //         document.getElementById('temp_province').value = '';
+    //         document.getElementById('temp_district').innerHTML = '<option value="">जिल्ला चयन गर्नुहोस्</option>';
+    //         document.getElementById('temp_local_level').innerHTML = '<option value="">स्थानीय तह चयन गर्नुहोस्</option>';
+    //         document.getElementById('temp_tole').value = '';
+    //     }
+    // }
     function copyPermanentToTemporary() {
-        if (document.getElementById('sameAddressCheckbox').checked) {
-            document.getElementById('temp_province').value = document.getElementById('perm_province').value;
-            loadDistricts(document.getElementById('perm_province').value, 'temp_district');
+    const isChecked = document.getElementById('sameAddressCheckbox').checked;
 
-            setTimeout(() => {
-                document.getElementById('temp_district').value = document.getElementById('perm_district').value;
-                loadLocalBodies(document.getElementById('perm_district').value, 'temp_local_level');
-            }, 300);
+    if (isChecked) {
+        // Province
+        const permProvince = document.getElementById('perm_province');
+        const tempProvince = document.getElementById('temp_province');
+        tempProvince.innerHTML = permProvince.innerHTML;
+        tempProvince.value = permProvince.value;
 
-            setTimeout(() => {
-                document.getElementById('temp_local_level').value = document.getElementById('perm_local_level').value;
-                document.getElementById('temp_tole').value = document.getElementById('perm_tole').value;
-            }, 600);
-        } else {
+        // District
+        const permDistrict = document.getElementById('perm_district');
+        const tempDistrict = document.getElementById('temp_district');
+        tempDistrict.innerHTML = permDistrict.innerHTML;
+        tempDistrict.value = permDistrict.value;
+
+        // Local Level (Municipality)
+        const permLocal = document.getElementById('perm_local_level');
+        const tempLocal = document.getElementById('temp_local_level');
+        tempLocal.innerHTML = permLocal.innerHTML;
+        tempLocal.value = permLocal.value;
+
+        // Ward/Tole
+        document.getElementById('temp_tole').value = document.getElementById('perm_tole').value;
+
+    } else {
             document.getElementById('temp_province').value = '';
             document.getElementById('temp_district').innerHTML = '<option value="">जिल्ला चयन गर्नुहोस्</option>';
             document.getElementById('temp_local_level').innerHTML = '<option value="">स्थानीय तह चयन गर्नुहोस्</option>';
             document.getElementById('temp_tole').value = '';
-        }
     }
+}
     </script>
 
 
-{{-- 
+    {{--
     <script src="{{ asset('js/make_addresses_same.js') }}"></script> --}}
     @endsection
