@@ -17,6 +17,7 @@ class ApplicantController extends Controller
     public function index(Request $request)
     {
         $query = Applicant::with(['user'])
+            ->whereNot('status',0)
             ->when($request->filled('name'), fn($q) => $q->where('name_ne', 'like', "%{$request->name}%"))
             ->when($request->filled('school_name'), fn($q) => $q->where('school_name', 'like', "%{$request->school_name}%"))
             ->when($request->filled('scholarship_group'), fn($q) => $q->where('scholarship_group', $request->scholarship_group))
@@ -48,7 +49,7 @@ class ApplicantController extends Controller
             if ($applicant->status == 0) {
                 return view('user.applicants.index', compact('user', 'applicants'));
             } else {
-                return view('user.applicants.message', compact('user', 'applicant'));
+                return view('user.applicants.message', compact('user', 'applicants'));
             }
         }
 
@@ -192,18 +193,18 @@ class ApplicantController extends Controller
 
 
     // Show form for editing applicant
-    public function edit()
+    public function edit($id)
     {
         $user = auth()->user();
 
-        // Fetch applicant with user relationship
-        $applicant = Applicant::with('user', 'address')->where('user_id', $user->id)->firstOrFail();
+        // Check ownership and fetch applicant with relationships
+        $applicant = Applicant::with('user', 'address')->where('id', $id)->where('user_id', $user->id)->firstOrFail();
 
-        // Fetch distinct provinces for dropdown
         $provinces = ProvinceData::select('STATE_CODE', 'STATE_NAME_NEP')->distinct()->get();
 
         return view('user.applicants.edit', compact('user', 'applicant', 'provinces'));
     }
+
 
 
 
@@ -353,6 +354,26 @@ class ApplicantController extends Controller
         } else {
             return view('user.applicants.show', compact('applicant', 'provinceMap', 'districtMap', 'localMap'));
         }
+    }
+    public function toggleStatus($id)
+    {
+        $applicant = Applicant::where('id', $id)
+            ->where('user_id', auth()->id())
+            ->firstOrFail();
+
+        $applicant->status = 1;
+        $applicant->save();
+
+        return redirect()->route('applicants.create')->with('success', 'Application submitted successfully.');
+    }
+        public function adminToggleStatus($id)
+    {
+        $applicant = Applicant::where('id', $id)->firstOrFail();
+
+        $applicant->status = 2;
+        $applicant->save();
+
+        return redirect()->route('applicants.index')->with('success', 'Application approved successfully.');
     }
 
 

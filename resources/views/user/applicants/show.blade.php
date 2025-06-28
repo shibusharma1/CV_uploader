@@ -480,23 +480,81 @@
             </div>
         </div>
     </div>
-
+    @if(auth()->user()->role == 2)
     @if($applicant->status == 0)
-    <div class="text-center no-print">
-        <a href="{{ route('applicants.edit', $applicant->id) }}" class="btn btn-primary">Edit Application</a>
+    <div class="d-flex justify-content-center gap-3 no-print mt-4">
+        <a href="{{ route('applicants.edit', $applicant->id) }}" class="btn btn-outline-primary px-4 shadow-sm">
+            <i class="bi bi-pencil-square me-1"></i> Edit Application
+        </a>
+
+        <form id="submitForm" action="{{ route('applicants.toggle-status', $applicant->id) }}" method="POST">
+            @csrf
+            @method('PATCH')
+            <button type="button" class="btn btn-success px-4 shadow-sm" onclick="confirmSubmission()">
+                <i class="bi bi-send-check me-1"></i> Submit
+            </button>
+        </form>
     </div>
-    @else
+    @elseif($applicant->status == 0)
     <div class="text-center no-print">
-        <button class="btn btn-primary" onclick="window.print()">Print Application</button>
-    </div>
-    @endif
+        <span class="btn btn-warning">Application is under review</span>
+        @else
+        <div class="text-center no-print">
+            <button class="btn btn-primary" onclick="window.print()">Print Application</button>
+        </div>
+        @endif
+        @else
+        @if($applicant->status == 1)
+        <div class="d-flex justify-content-center gap-3 no-print mt-4">
+            <form id="submitForm" action="{{ route('applicants.admin-toggle-status', $applicant->id) }}" method="POST">
+                @csrf
+                @method('PATCH')
+                <button type="button" class="btn btn-success px-4 shadow-sm" onclick="confirmSubmissionadmin()">
+                    <i class="bi bi-send-check me-1"></i> Approve Application
+                </button>
+            </form>
+        </div>
+        @endif
+        @endif
 
 
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous">
-    </script>
-
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous">
+        </script>
+        <script>
+            function confirmSubmission() {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'Do you want to submit the application?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, submit it!',
+            cancelButtonText: 'Cancel',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById('submitForm').submit();
+            }
+        });
+    }
+                function confirmSubmissionadmin() {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'Do you want to approve the application?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, approve it!',
+            cancelButtonText: 'Cancel',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById('submitForm').submit();
+            }
+        });
+    }
+        </script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 </body>
 

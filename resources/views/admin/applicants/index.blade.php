@@ -51,8 +51,8 @@
             <label class="form-label small text-muted" for="filter_status">Status</label>
             <select id="filter_status" name="status" class="form-select">
                 <option value="">All Status</option>
-                <option value="0" {{ request('status')==='0' ? 'selected' : '' }}>Pending</option>
-                <option value="1" {{ request('status')==='1' ? 'selected' : '' }}>Approved</option>
+                <option value="1" {{ request('status')==='1' ? 'selected' : '' }}>Pending</option>
+                <option value="2" {{ request('status')==='2' ? 'selected' : '' }}>Approved</option>
             </select>
         </div>
 
@@ -94,7 +94,7 @@
                             <td>{{ $applicants->firstItem() + $index }}</td>
                             <td class="text-start">
                                 @if($applicant->documents && $applicant->documents->passport_size_photo)
-                                <img src="{{ asset('storage/'.$applicant->documents->passport_size_photo) }}"
+                                <img src="{{ asset($applicant->documents->passport_size_photo) }}"
                                     alt="Passport Size Photo" style="height:150px; width:150px; object-fit:cover;"
                                     class="img-thumbnail">
                                 @else
@@ -105,13 +105,13 @@
                             <td class="text-start">{{ $applicant->school_name }}</td>
                             <td>{{ ucfirst($applicant->scholarship_group) }}</td>
                             <td>
-                                <span class="badge {{ $applicant->status ? 'bg-success' : 'bg-warning text-dark' }}">
-                                    {{ $applicant->status ? 'Approved' : 'Pending' }}
+                                <span class="badge {{ $applicant->status ? 'bg-warning text-dark' : 'bg-success' }}">
+                                    {{ $applicant->status ? 'Pending' : 'Approved' }}
                                 </span>
                             </td>
                             <td>{{ $applicant->created_at->format('d M Y') }}</td>
                             <td>
-                                <a href="{{ route('applicants.show', $applicant) }}"
+                                <a href="{{ route('applicants.show', $applicant->user->id) }}" target="_blank"
                                     class="btn btn-sm btn-info">View</a>
                                 <a href="{{ route('applicants.edit', $applicant) }}"
                                     class="btn btn-sm btn-warning">Edit</a>
