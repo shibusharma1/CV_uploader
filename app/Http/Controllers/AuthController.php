@@ -20,27 +20,57 @@ class AuthController extends Controller
         return view('auth.login');
     }
 
+    // public function login(Request $request)
+    // {
+    //     $credentials = $request->validate([
+    //         'email' => ['required', 'email'],
+    //         'password' => ['required']
+    //     ]);
+
+    //     if (Auth::attempt($credentials)) {
+    //         $request->session()->regenerate();
+    //         if (!Auth::user()->hasVerifiedEmail()) {
+    //             return redirect()->route('verification.notice');
+    //         }
+
+    //         // Redirect to role-specific dashboard
+    //         return redirect()->route($this->redirectUser(Auth::user()));
+    //     }
+
+    //     return back()->withErrors([
+    //         'email' => 'Invalid credentials.'
+    //     ]);
+    // }
     public function login(Request $request)
-    {
-        $credentials = $request->validate([
-            'email' => ['required', 'email'],
-            'password' => ['required']
-        ]);
+{
+    // Validate incoming request
+    $credentials = $request->validate([
+        'email' => ['required', 'email'],
+        'password' => ['required'],
+    ]);
 
-        if (Auth::attempt($credentials)) {
-            $request->session()->regenerate();
-            if (!Auth::user()->hasVerifiedEmail()) {
-                return redirect()->route('verification.notice');
-            }
+    // Attempt to log the user in
+    if (Auth::attempt($credentials)) {
+        $request->session()->regenerate();
 
-            // Redirect to role-specific dashboard
-            return redirect()->route($this->redirectUser(Auth::user()));
+        // Check if the user's email is verified
+        if (!Auth::user()->hasVerifiedEmail()) {
+            Auth::logout(); // Ensure no session remains
+            return redirect()->route('verification.notice')->withErrors([
+                'email' => 'Please verify your email before logging in.',
+            ]);
         }
 
-        return back()->withErrors([
-            'email' => 'Invalid credentials.'
-        ]);
+        // Redirect based on user role
+        return redirect()->route($this->redirectUser(Auth::user()));
     }
+
+    // Failed login attempt
+    return back()->withErrors([
+        'email' => 'Invalid credentials.',
+    ])->withInput($request->only('email'));
+}
+    
 
     public function showRegisterForm()
     {

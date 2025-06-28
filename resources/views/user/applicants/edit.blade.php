@@ -1,349 +1,26 @@
+@extends('layout.app')
+
+@section('title', 'छात्रवृत्तिको लागि दरखास्त फारम')
+@section('content')
 <!DOCTYPE html>
 <html lang="ne">
 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="csrf-token" content="{{ csrf_token() }}">
   <title>छात्रवृत्तिको लागि दरखास्त फारम</title>
   <!-- Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
     xintegrity="sha384-QWTKZyjpPEjLsjZzGfkkFUwyx2FwaSMGgDqFwRWnIkhA2jYw5z5h1a4zH5q" crossorigin="anonymous">
   <!-- Google Fonts for Inter (Optional, but good for consistency) -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <style>
-    body {
-      font-family: 'Inter', sans-serif;
-      background-color: #f8f9fa;
-      /* Light grey background */
-    }
-
-    .form-container {
-      background-color: #ffffff;
-      padding: 2rem;
-      border-radius: 0.75rem;
-      /* Rounded-xl */
-      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-      /* Shadow-lg */
-      border: 1px solid #e2e8f0;
-      /* Border-gray-200 */
-      max-width: 900px;
-      /* Max-w-4xl (approx) */
-      margin: 1.5rem auto;
-      /* My-4 sm:my-8 */
-    }
-
-    .section-heading {
-      font-size: 1.25rem;
-      /* text-[20px] */
-      font-weight: 600;
-      /* font-semibold */
-      color: #0d6efd;
-      /* text-blue-700 */
-      padding-bottom: 0.75rem;
-      /* pb-3 */
-      margin-bottom: 1.5rem;
-      /* mb-6 */
-      border-bottom: 1px solid #cfe2ff;
-      /* border-b border-blue-200 */
-      text-align: left;
-    }
-
-    .sub-section-heading {
-      font-size: 1.25rem;
-      /* text-[20px] */
-      font-weight: 500;
-      /* font-medium */
-      color: #007bff;
-      /* text-blue-600 */
-      border-bottom: 2px dashed #cfe2ff;
-      /* border-b-2 border-dashed border-blue-200 */
-      padding-bottom: 0.5rem;
-      /* pb-2 */
-      margin-bottom: 1rem;
-      /* mb-4 */
-    }
-
-    .form-label-custom {
-      font-size: 0.75rem;
-      /* text-[12px] */
-      font-weight: 500;
-      /* font-medium */
-      color: #4a5568;
-      /* text-gray-700 */
-      text-align: left;
-      padding-right: 1rem;
-      min-width: 14rem;
-      /* md:w-56 */
-    }
-
-    .form-control-custom {
-      height: 2.5rem;
-      /* h-2 (adjust for visual height) */
-      padding: 0.375rem 0.75rem;
-      /* p-3 */
-      border-radius: 0.375rem;
-      /* rounded-md */
-      transition: all 0.2s ease-in-out;
-      font-size: 0.875rem;
-    }
-
-    .form-control-custom:focus {
-      box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
-      /* focus:ring-2 focus:ring-blue-300 */
-      border-color: #0d6efd;
-      /* focus:border-blue-500 */
-    }
-
-    .form-check-input-custom {
-      transform: scale(1.1);
-      /* transform scale-110 */
-      accent-color: #0d6efd;
-      /* accent-blue-600 */
-      margin-right: 0.5rem;
-      /* mr-2 */
-    }
-
-    .form-group-flex {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 0.5rem;
-      /* gap-y-2 */
-      margin-bottom: 1rem;
-      /* mb-4 */
-    }
-
-    @media (min-width: 768px) {
-      .form-group-flex {
-        flex-direction: row;
-        align-items: center;
-        /* md:items-left */
-        gap: 1rem;
-        /* md:gap-x-4 */
-      }
-
-      .form-label-custom {
-        text-align: left;
-        /* md:text-left */
-        padding-right: 1rem;
-        /* md:pr-4 */
-      }
-    }
-
-    .radio-group-flex {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 1rem;
-      /* gap-x-4 gap-y-2 */
-    }
-
-    .radio-group-flex-gender {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 1.5rem;
-      /* gap-x-6 gap-y-3 */
-    }
-
-    .progress-bar-custom {
-      height: 0.625rem;
-      /* h-2.5 */
-      border-radius: 9999px;
-      /* rounded-full */
-      background-color: #e2e8f0;
-      /* bg-gray-200 */
-    }
-
-    .progress-bar-fill {
-      height: 100%;
-      border-radius: 9999px;
-      background-color: #0d6efd;
-      /* bg-blue-600 */
-      transition: width 0.5s ease-out;
-      /* transition-all duration-500 ease-out */
-    }
-
-    .disclaimer-text {
-      font-size: 0.875rem;
-      /* text-sm */
-      color: #4a5568;
-      /* text-gray-600 */
-      margin-top: 2rem;
-      /* mt-8 */
-      padding-top: 1.25rem;
-      /* pt-5 */
-      border-top: 1px solid #e2e8f0;
-      /* border-t border-gray-200 */
-      text-align: justify;
-      font-style: italic;
-    }
-
-    .document-upload-section {
-      background-color: #e0f2fe;
-      /* bg-blue-50 */
-      border: 1px solid #90cdf4;
-      /* border-blue-200 */
-      border-radius: 0.5rem;
-      /* rounded-lg */
-      box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06);
-      /* shadow-inner */
-      padding: 1.5rem;
-      /* p-6 */
-    }
-
-    .document-upload-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 1rem;
-      /* gap-4 */
-    }
-
-    @media (min-width: 576px) {
-      .document-upload-grid {
-        grid-template-columns: repeat(2, 1fr);
-        /* sm:grid-cols-2 */
-      }
-    }
-
-    .document-upload-label {
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      padding: 0.75rem;
-      /* p-3 */
-      border: 1px solid #cbd5e0;
-      /* border-gray-300 */
-      border-radius: 0.375rem;
-      /* rounded-md */
-      background-color: #ffffff;
-      /* bg-white */
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .document-upload-label:hover {
-      border-color: #0d6efd;
-      /* hover:border-blue-500 */
-    }
-
-    .document-upload-label input[type="file"] {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      opacity: 0;
-      cursor: pointer;
-      z-index: 1;
-      /* Ensure it's clickable */
-    }
-
-    .document-upload-label span:first-child {
-      font-weight: 500;
-      /* font-medium */
-      color: #4a5568;
-      /* text-gray-700 */
-      margin-bottom: 0.25rem;
-      /* mb-1 */
-      z-index: 2;
-    }
-
-    .document-upload-label span:last-child {
-      font-size: 0.875rem;
-      /* text-sm */
-      color: #718096;
-      /* text-gray-500 */
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      margin-top: 0.25rem;
-      /* mt-1 */
-      z-index: 2;
-    }
-
-    .file-input-wrapper {
-      position: relative;
-      width: 100%;
-    }
-
-    .file-input-wrapper input[type="file"] {
-      position: absolute;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      opacity: 0;
-      cursor: pointer;
-    }
-
-    .file-input-wrapper .input-group-text {
-      cursor: pointer;
-    }
-
-    .file-input-wrapper .form-control {
-      cursor: pointer;
-    }
-
-    .required-docs-message {
-      color: #dc3545;
-      /* text-red-600 */
-      font-size: 0.875rem;
-      /* text-sm */
-      margin-top: 1rem;
-      /* mt-4 */
-      font-weight: 600;
-      /* font-semibold */
-    }
-
-    .btn-custom {
-      padding: 0.5rem 1.5rem;
-      /* py-2 px-6 */
-      font-weight: 600;
-      /* font-semibold */
-      border-radius: 0.5rem;
-      /* rounded-lg */
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-      /* shadow-md */
-      transition: all 0.2s ease-in-out;
-    }
-
-    .btn-prev {
-      background-color: #adb5bd;
-      /* bg-gray-300 */
-      color: #2d3748;
-      /* text-gray-800 */
-    }
-
-    .btn-prev:hover {
-      background-color: #6c757d;
-      /* hover:bg-gray-400 (adjusted for darker hover) */
-      color: #ffffff;
-    }
-
-    .btn-next {
-      background-color: #0d6efd;
-      /* bg-blue-600 */
-      color: #ffffff;
-    }
-
-    .btn-next:hover {
-      background-color: #0a58ca;
-      /* hover:bg-blue-700 (darker blue) */
-    }
-
-    /* Animation for steps (simple display change) */
-    .step-content {
-      display: none;
-      /* No complex fade-in animation with pure CSS for simplicity in multi-step form */
-    }
-
-    .step-content.active {
-      display: block;
-    }
-  </style>
+  <link rel="stylesheet" href="{{ asset('css/schoolarshipform.css') }}">
 </head>
 
 <body>
   <div class="container form-container">
-    <h2 class="text-center mb-4 text-primary" style="font-size: 1.875rem; margin-top: -0.5rem;">छात्रवृत्तिको लागि
+    <h2 class="text-center mb-4" style="font-size: 1.875rem; margin-top: -0.5rem;color:#114499;">छात्रवृत्तिको लागि
       दरखास्त फारम</h2>
 
     <p class="mb-4 text-secondary text-justify" style="font-size: 0.875rem;">
@@ -362,6 +39,18 @@
     <div class="progress-bar-custom mb-4">
       <div id="progressBarFill" class="progress-bar-fill" style="width: 20%;"></div>
     </div>
+    {{-- <div class="text-center mb-3 text-muted" style="font-size: 0.875rem; font-weight: 500;">
+      Step <span id="currentStepDisplay">1</span> of <span id="totalStepsDisplay">5</span>
+    </div>
+
+    <div class="step-progressbar mb-4 d-flex justify-content-between align-items-center">
+      <div class="step" data-step="1">1</div>
+      <div class="step" data-step="2">2</div>
+      <div class="step" data-step="3">3</div>
+      <div class="step" data-step="4">4</div>
+      <div class="step" data-step="5">5</div>
+    </div> --}}
+
     @if(session('error'))
     <div class="alert alert-danger">
       {{ session('error') }}
@@ -373,7 +62,7 @@
       {{ session('success') }}
     </div>
     @endif
-    <form id="scholarshipForm" action="{{ route('applicants.store')}}" method="POST" enctype="multipart/form-data">
+    <form id="scholarshipForm" action="{{ url('applicants/store')}}" method="POST" enctype="multipart/form-data">
       @csrf
       <!-- Step 1: Personal Details -->
       <div id="step1" class="step-content active">
@@ -491,15 +180,24 @@
 
 
         <div class="form-group-flex">
-          <label class="form-label-custom">५. जन्म मिति:</label>
+          {{-- <label class="form-label-custom">५. जन्म मिति:</label>
           <div class="d-flex w-100 align-items-center">
             <label for="dob_bs" class="form-label mb-0 me-2" style="font-size: 0.875rem;">वि.सं.</label>
             <input type="date" id="dob_bs" name="dob_bs" class="form-control form-control-custom me-3"
               placeholder="YYYY/MM/DD (BS)" pattern="\d{4}/\d{2}/\d{2}" max="{{ date('Y-m-d') }}" required>
             <label for="dob_ad" class="form-label mb-0 me-2" style="font-size: 0.875rem;">ई. सं.</label>
-            <input type="date" id="dob_ad" name="dobAd" class="form-control form-control-custom"
+            <input type="date" id="dob_ad" name="dob_ad" class="form-control form-control-custom"
               placeholder="YYYY/MM/DD (AD)" pattern="\d{4}/\d{2}/\d{2}" max="{{ date('Y-m-d') }}" required>
+          </div> --}}
+          <label class="form-label-custom">५. जन्म मिति:</label>
+          <div class="d-flex w-100 align-items-center">
+            <label for="dob_bs" class="form-label mb-0 me-2" style="font-size: 0.875rem;">वि.सं.</label>
+            <input type="date" id="dob_bs" name="dob_bs" class="form-control form-control-custom me-3" required>
+
+            <label for="dob_ad" class="form-label mb-0 me-2" style="font-size: 0.875rem;">ई. सं.</label>
+            <input type="date" id="dob_ad" name="dob_ad" class="form-control form-control-custom" required>
           </div>
+
         </div>
 
         <div class="form-group-flex">
@@ -531,22 +229,33 @@
           <h4 class="sub-section-heading">क) स्थायी:</h4>
           <div class="form-group-flex">
             <label for="perm_province" class="form-label-custom" style="min-width: 9rem;">क) प्रदेशः</label>
-            <input type="text" id="perm_province" name="permanent_province" class="form-control form-control-custom" required>
+            <input type="text" id="perm_province" name="permanent_province" class="form-control form-control-custom"
+              required>
           </div>
           <div class="form-group-flex">
             <label for="perm_district" class="form-label-custom" style="min-width: 9rem;">ख) जिल्लाः</label>
-            <input type="text" id="perm_district" name="permanent_district" class="form-control form-control-custom" required>
+            <input type="text" id="perm_district" name="permanent_district" class="form-control form-control-custom"
+              required>
           </div>
           <div class="form-group-flex">
             <label for="perm_local_level" class="form-label-custom" style="min-width: 9rem;">ग) स्थानीय तहः</label>
-            <input type="text" id="perm_local_level" name="permanent_municipality" class="form-control form-control-custom"
-              required>
+            <input type="text" id="perm_local_level" name="permanent_municipality"
+              class="form-control form-control-custom" required>
           </div>
           <div class="form-group-flex">
             <label for="perm_tole" class="form-label-custom" style="min-width: 9rem;">घ) टोल:</label>
             <input type="text" id="perm_tole" name="permanent_ward" class="form-control form-control-custom" required>
           </div>
         </div>
+
+        <!-- checkbox to mark as same temporary address and permanent address same -->
+        <div class="form-check mb-3">
+          <input class="form-check-input" type="checkbox" id="sameAddressCheckbox" onclick="copyPermanentToTemporary()">
+          <label class="form-check-label" for="sameAddressCheckbox">
+            स्थायी ठेगाना अनुसार अस्थायी ठेगाना राख्नुहोस् (Same as Permanent Address)
+          </label>
+        </div>
+
 
         <div class="border border-gray-200 p-4 rounded-lg bg-light mb-4 shadow-sm">
           <h4 class="sub-section-heading">ख) अस्थायी :</h4>
@@ -560,7 +269,8 @@
           </div>
           <div class="form-group-flex">
             <label for="temp_local_level" class="form-label-custom" style="min-width: 9rem;">ग) स्थानीय तहः</label>
-            <input type="text" id="temp_local_level" name="temporary_municipality" class="form-control form-control-custom">
+            <input type="text" id="temp_local_level" name="temporary_municipality"
+              class="form-control form-control-custom">
           </div>
           <div class="form-group-flex">
             <label for="temp_tole" class="form-label-custom" style="min-width: 9rem;">घ) टोल:</label>
@@ -574,7 +284,7 @@
         <h3 class="section-heading">पारिवारिक विवरण</h3>
         <div class="form-group-flex">
           <label for="father_name" class="form-label-custom">८. बुवाको नाम, थर:</label>
-          <input type="text" id="father_name" name="fatherName" class="form-control form-control-custom" required>
+          <input type="text" id="father_name" name="father_name" class="form-control form-control-custom" required>
         </div>
         <div class="form-group-flex">
           <label for="father_occupation" class="form-label-custom" style="padding-left: 1rem;">पेशाः</label>
@@ -612,8 +322,8 @@
         </div>
         <div class="form-group-flex">
           <label for="estimated_income" class="form-label-custom">१२. आम्दानीको अनुमानित विवरण रकममा :</label>
-          <input type="number" id="family_income_amount" name="estimatedIncome" class="form-control form-control-custom"
-            min="0" required>
+          <input type="number" id="family_income_amount" name="family_income_amount"
+            class="form-control form-control-custom" min="0" required>
         </div>
         <div class="form-group-flex">
           <label for="student_contact_number" class="form-label-custom">१३) विद्यार्थीको सम्पर्क नम्बरः</label>
@@ -637,8 +347,8 @@
         <div class="form-group-flex">
           <label for="desired_stream" class="form-label-custom">१५. कक्षा ११ मा अध्ययन गर्न चाहेको विषय
             समूहः</label>
-          <input type="text" id="desired_class11_subject" name="desiredClass11Subject"
-            class="form-control form-control-custom" required>
+          <input type="text" id="desired_class11_subject" name="desired_stream" class="form-control form-control-custom"
+            required>
         </div>
         <div class="form-group-flex">
           <label for="see_symbol_number" class="form-label-custom">१६. SEE को सिम्बल नम्बरः</label>
@@ -681,7 +391,8 @@
             <!-- Citizenship/Birth Certificate Copy -->
             <label class="document-upload-label">
               <span>नागरिकता/जन्म प्रमाणपत्र:</span>
-              <input type="file" name="citizenship_birth_certificate" id="citizenship_birth_certificate" accept=".pdf,image/*">
+              <input type="file" name="citizenship_birth_certificate" id="citizenship_birth_certificate"
+                accept=".pdf,image/*">
               <span id="file_citizenship_birth_certificate">Choose file...</span>
             </label>
             <!-- Disability ID Copy -->
@@ -693,7 +404,8 @@
             <!-- Dalit/Janajati Recommendation -->
             <label class="document-upload-label">
               <span>दलित/जनजाति सिफारिस:</span>
-              <input type="file" name="dalit_janjati_recommendation" id="dalit_janjati_recommendation" accept=".pdf,image/*">
+              <input type="file" name="dalit_janjati_recommendation" id="dalit_janjati_recommendation"
+                accept=".pdf,image/*">
               <span id="file_dalit_janjati_recommendation">Choose file...</span>
             </label>
             <!-- Impoverished Recommendation -->
@@ -731,7 +443,7 @@
       <div class="d-flex justify-content-between mt-4">
         <button type="button" id="prevButton" class="btn btn-custom btn-prev" style="display: none;">Previous</button>
         <button type="button" id="nextButton" class="btn btn-custom btn-next">Next</button>
-        <button type="submit" id="submitButton" class="btn btn-custom btn-next" style="display: none;">Submit</button>
+        <button type="submit" id="submitButton" class="btn btn-custom btn-next" style="display: none;">Preview</button>
       </div>
     </form>
   </div>
@@ -930,6 +642,47 @@
             }
         });
   </script>
-</body>
+<!-- Script for initializing datepicker and syncing BS → AD -->
+<script>
+  window.onload = function () {
+    // Initialize Nepali Datepicker
+    const bsInput = document.getElementById("dob_bs");
+    bsInput.nepaliDatePicker({
+      dateFormat: "YYYY-MM-DD",
+      closeOnDateSelect: true
+    });
 
-</html>
+    // On BS date change, convert to AD and fill the English input
+    bsInput.addEventListener("dateChange", function (e) {
+      let bsDate = e.target.value;
+      if (bsDate) {
+        try {
+          const adDate = NepaliFunctions.BS2AD(bsDate); // Convert to AD
+          const formatted = adDate.year + '-' + String(adDate.month).padStart(2, '0') + '-' + String(adDate.day).padStart(2, '0');
+          document.getElementById("dob_ad").value = formatted;
+        } catch (err) {
+          console.error("Invalid BS date or conversion error:", err);
+        }
+      }
+    });
+
+    // Optional: Convert AD to BS if needed
+    const adInput = document.getElementById("dob_ad");
+    adInput.addEventListener("change", function (e) {
+      let adDate = e.target.value;
+      if (adDate) {
+        try {
+          const bsDate = NepaliFunctions.AD2BS(adDate);
+          const formatted = bsDate.year + '-' + String(bsDate.month).padStart(2, '0') + '-' + String(bsDate.day).padStart(2, '0');
+          bsInput.value = formatted;
+        } catch (err) {
+          console.error("Invalid AD date or conversion error:", err);
+        }
+      }
+    });
+  };
+</script>
+ 
+
+  <script src="{{ asset('js/make_addresses_same.js') }}"></script>
+  @endsection

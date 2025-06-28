@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers;
 
+use App\Models\ProvinceData;
 use App\Models\User;
 use App\Models\Applicant;
 use App\Models\Auth\Auth;
@@ -13,12 +14,6 @@ use Illuminate\Support\Facades\Storage;
 
 class ApplicantController extends Controller
 {
-    // Display paginated list of applicants
-    // public function index()
-    // {
-    //     $applicants = User::with(['address', 'documents'])->paginate(20);
-    //     return view('applicants.index', compact('applicants'));
-    // }
     public function index(Request $request)
     {
         $query = Applicant::with(['user'])
@@ -32,17 +27,65 @@ class ApplicantController extends Controller
 
         return view('admin.applicants.index', compact('applicants'));
     }
-    // Show form to create new applicant
+
     public function create()
     {
-        // Get the currently authenticated user with related models
-        $user = auth()->user()->load(['applicant', 'address', 'documents']);
-        return view('test', compact('user'));
+        $user = auth()->user();
+
+        // Try to get applicant record for the logged-in user
+        $applicant = $user->applicant;
+        // Fetch only the distinct provinces
+        $provinces = ProvinceData::select('STATE_CODE', 'STATE_NAME_NEP')
+            ->distinct()
+            ->get();
+
+        // If applicant exists
+        if ($applicant) {
+            // Fetch with relationship if needed for view
+            $applicants = Applicant::with('user')->where('user_id', auth()->id())->first();
+
+            // Check status and return appropriate view
+            if ($applicant->status == 0) {
+                return view('user.applicants.index', compact('user', 'applicants'));
+            } else {
+                return view('user.applicants.message', compact('user', 'applicant'));
+            }
+        }
+
+        // No applicant record found, show create page
+        return view('user.applicants.create', compact('user', 'provinces'));
     }
+
+
+    // AJAX endpoint to fetch districts by province
+    public function getDistricts($provinceCode)
+    {
+        $districts = ProvinceData::select('DISTRICT_CODE', 'DISTRICT_NAME_NEP')
+            ->where('STATE_CODE', $provinceCode)
+            ->distinct()
+            ->get();
+
+        return response()->json($districts);
+    }
+
+    // AJAX endpoint to fetch local bodies by district
+    public function getLocalBodies($districtCode)
+    {
+        $locals = ProvinceData::select('LOCAL_BODY_CODE', 'LOCAL_BODY_NAME_NEP')
+            ->where('DISTRICT_CODE', $districtCode)
+            ->distinct()
+            ->get();
+
+        return response()->json($locals);
+    }
+
+
+
 
     // Store new applicant with related address & documents
     public function store(Request $request)
     {
+        dd($request->all());
         // Check if the authenticated user already has an applicant record
         if (auth()->user()->applicant) {
             return redirect()->back()->with('error', 'You have already submitted an application.');
@@ -140,8 +183,10 @@ class ApplicantController extends Controller
         if (!empty($documentData)) {
             $user->documents()->create($documentData);
         }
+        return redirect()->route('applicants.show', Auth::user()->id)
+            ->with('success', 'Applicant created successfully.');
 
-        return redirect()->route('home')->with('success', 'Applicant created successfully.');
+        // return redirect()->back('')->with('success', 'Applicant created successfully.');
     }
 
 
@@ -281,10 +326,20 @@ class ApplicantController extends Controller
 
         return redirect()->route('applicants.index')->with('success', 'Applicant deleted successfully.');
     }
-    public function show(Applicant $applicant)
+    public function show($id)
     {
-        $applicant->load(['user']);
-        return view('admin.applicants.show', compact('applicant'));
+        $applicant = Applicant::with('user')->where('user_id', $id)->firstOrFail();
+
+
+        if (!$applicant) {
+            return redirect()->back()->with('error', 'You haven\'t applied yet. Please apply first.');
+        }
+
+        if (in_array($applicant->user->role, [0, 1])) {
+            return view('admin.applicants.show', compact('applicant'));
+        } else {
+            return view('user.applicants.show', compact('applicant'));
+        }
     }
 
 
