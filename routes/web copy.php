@@ -35,7 +35,7 @@ Route::get('/clear-all', function () {
 Route::get('/', fn() => view('home'))->name('home');
 
 // Test page (temporary or for debugging)
-// Route::get('/test', fn() => view('test'));
+Route::get('/test', fn() => view('test'));
 Route::get('/admitcard', fn() => view('admitcard'));
 Route::get('/pdf', fn() => view('pdf'));
 
@@ -124,71 +124,53 @@ Route::middleware(['auth', 'verified'])->group(function () {
 });
 
 
-
-
-
-// // ===============================
-// // Admin-only Routes (Roles 0 and 1)
-// // ===============================
+// // Admin-only routes (must be authenticated, verified, and have role 0 or 1)
 // Route::middleware(['auth', 'verified', 'role:0,1'])->group(function () {
-
-
 //     // Admin dashboard
 //     Route::get('/dashboard/admin', [DashboardController::class, 'admin'])->name('admin.dashboard');
-
 //     // Admin Management
 //     Route::resource('admins', AdminController::class);
-
 //     // Application Settings
-//     Route::get('/settings', [SettingController::class, 'edit'])->name('settings.edit');
-//     Route::post('/settings', [SettingController::class, 'update'])->name('settings.update');
-
-//     // Applicants Management
+//     Route::get('/settings-list', [SettingController::class, 'edit'])->name('settings.edit');
+//     Route::post('/settings-update', [SettingController::class, 'update'])->name('settings.update');
+//     // ===============================
+// // Applicants Management Routes
+// // ===============================
 //     Route::prefix('applicants')->name('applicants.')->group(function () {
-//         Route::get('/', [ApplicantController::class, 'index'])->name('index');
-//         Route::get('/create', [ApplicantController::class, 'create'])->name('create');
-//         Route::post('/', [ApplicantController::class, 'store'])->name('store');
-//         Route::get('/{applicant}/edit', [ApplicantController::class, 'edit'])->name('edit');
-//         Route::put('/{applicant}', [ApplicantController::class, 'update'])->name('update');
-//         Route::delete('/{applicant}', [ApplicantController::class, 'destroy'])->name('destroy');
-//         Route::get('/show/{applicant}', [ApplicantController::class, 'show'])->name('show');
+//         Route::get('/applicant-list', [ApplicantController::class, 'index'])->name('index');              // List applicants
+//         Route::get('/create', [ApplicantController::class, 'create'])->name('create');      // Show create form
+//         Route::post('/store', [ApplicantController::class, 'store'])->name('store');             // Store applicant
+//         Route::get('/{applicant}/edit', [ApplicantController::class, 'edit'])->name('edit');// Edit form
+//         Route::put('/{applicant}', [ApplicantController::class, 'update'])->name('update'); // Update applicant
+//         Route::delete('/{applicant}', [ApplicantController::class, 'destroy'])->name('destroy'); // Delete
+//         Route::get('/show/{applicant}', [ApplicantController::class, 'show'])->name('show');// Show details
 //     });
-
-//     // Toggle user status (e.g., activate/deactivate)
-//     Route::patch('users/{user}/toggle-status', [UserController::class, 'toggleStatus'])->name('users.toggle-status');
-//     // User profile
-//     Route::get('/profile', [UserController::class, 'profile'])->name('profile');
-//     Route::post('/profile/update', [UserController::class, 'updateProfile'])->name('profile.update');
 
 // });
 
+// // User-only routes (must be authenticated, verified, and have role 2)
+// Route::middleware(['auth', 'verified', 'role:2'])->group(function () {
+//     // User dashboard
+//     Route::get('/dashboard/user', [DashboardController::class, 'user'])->name('user.dashboard');
+//     // ===============================
+// // Applicants Management Routes
 // // ===============================
-// // User-only Routes (Role 2)
-// // ===============================
-// Route::middleware(['auth', 'verified', 'role:2'])->prefix('user')->name('user.')->group(function () {
-
-//     // User Dashboard
-//     Route::get('/dashboard', [DashboardController::class, 'user'])->name('dashboard');
-
-//     // Applicants Management
 //     Route::prefix('applicants')->name('applicants.')->group(function () {
-//         Route::get('/', [ApplicantController::class, 'index'])->name('index');
-//         Route::get('/create', [ApplicantController::class, 'create'])->name('create');
-//         Route::post('/', [ApplicantController::class, 'store'])->name('store');
-//         Route::get('/{applicant}/edit', [ApplicantController::class, 'edit'])->name('edit');
-//         Route::put('/{applicant}', [ApplicantController::class, 'update'])->name('update');
-//         Route::delete('/{applicant}', [ApplicantController::class, 'destroy'])->name('destroy');
-//         Route::get('/show/{applicant}', [ApplicantController::class, 'show'])->name('show');
+//         Route::get('/applicant-list', [ApplicantController::class, 'index'])->name('index');              // List applicants
+//         Route::get('/create', [ApplicantController::class, 'create'])->name('create');      // Show create form
+//         Route::post('/store', [ApplicantController::class, 'store'])->name('store');             // Store applicant
+//         Route::get('/{applicant}/edit', [ApplicantController::class, 'edit'])->name('edit');// Edit form
+//         Route::put('/{applicant}', [ApplicantController::class, 'update'])->name('update'); // Update applicant
+//         Route::delete('/{applicant}', [ApplicantController::class, 'destroy'])->name('destroy'); // Delete
+//         Route::get('/show/{applicant}', [ApplicantController::class, 'show'])->name('show');// Show details
 //     });
+//     // ===============================
+//     // User Management Routes
+//     // ===============================
+//     Route::resource('users-list', UserController::class); // Standard CRUD routes for users
 
-//     // User Management
-//     Route::resource('users', UserController::class);
-//     // Toggle user status (e.g., activate/deactivate)
-//     Route::patch('users/{user}/toggle-status', [UserController::class, 'toggleStatus'])->name('users.toggle-status');
-//     // User profile
-//     Route::get('/profile', [UserController::class, 'profile'])->name('profile');
-//     Route::post('/profile/update', [UserController::class, 'updateProfile'])->name('profile.update');
 // });
+
 
 
 
@@ -197,4 +179,4 @@ Route::middleware(['auth', 'verified'])->group(function () {
 // Fallback page
 Route::fallback(function () {
     return response()->view('errors.404', [], 404);
-}); 
+});

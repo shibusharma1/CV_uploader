@@ -1,15 +1,18 @@
 <?php
 namespace App\Http\Controllers;
 
-use App\Models\ProvinceData;
 use App\Models\User;
 use App\Models\Applicant;
 use App\Models\Auth\Auth;
+use App\Models\ProvinceData;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use App\Models\ApplicantAddress;
+use App\Mail\ApplicationApproved;
+use App\Mail\ApplicationSuccess;
 use App\Models\ApplicantDocuments;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 
 class ApplicantController extends Controller
@@ -17,7 +20,7 @@ class ApplicantController extends Controller
     public function index(Request $request)
     {
         $query = Applicant::with(['user'])
-            ->whereNot('status',0)
+            ->whereNot('status', 0)
             ->when($request->filled('name'), fn($q) => $q->where('name_ne', 'like', "%{$request->name}%"))
             ->when($request->filled('school_name'), fn($q) => $q->where('school_name', 'like', "%{$request->school_name}%"))
             ->when($request->filled('scholarship_group'), fn($q) => $q->where('scholarship_group', $request->scholarship_group))
@@ -86,7 +89,7 @@ class ApplicantController extends Controller
     // Store new applicant with related address & documents
     public function store(Request $request)
     {
-        // dd($request->all());
+
         // Check if the authenticated user already has an applicant record
         if (auth()->user()->applicant) {
             return redirect()->back()->with('error', 'You have already submitted an application.');
@@ -184,10 +187,10 @@ class ApplicantController extends Controller
         if (!empty($documentData)) {
             $user->documents()->create($documentData);
         }
+        // Mail::to($user->email)->send(new ApplicationSuccess($user));
         return redirect()->route('applicants.show', Auth::user()->id)
             ->with('success', 'Applicant created successfully.');
 
-        // return redirect()->back('')->with('success', 'Applicant created successfully.');
     }
 
 
@@ -204,7 +207,6 @@ class ApplicantController extends Controller
 
         return view('user.applicants.edit', compact('user', 'applicant', 'provinces'));
     }
-
 
 
 
@@ -324,8 +326,6 @@ class ApplicantController extends Controller
         return redirect()->route('applicants.index')->with('success', 'Applicant updated successfully.');
     }
 
-
-
     // Delete applicant and related address/documents (cascade handled by DB)
     public function destroy(User $applicant)
     {
@@ -349,11 +349,11 @@ class ApplicantController extends Controller
             return redirect()->back()->with('error', 'You haven\'t applied yet. Please apply first.');
         }
 
-        if (in_array($applicant->user->role, [0, 1])) {
-            return view('admin.applicants.show', compact('applicant', 'provinceMap', 'districtMap', 'localMap'));
-        } else {
+        // if (in_array($applicant->user->role, [0, 1])) {
+        //     return view('user.applicants.show', compact('applicant', 'provinceMap', 'districtMap', 'localMap'));
+        // } else {
             return view('user.applicants.show', compact('applicant', 'provinceMap', 'districtMap', 'localMap'));
-        }
+        // }
     }
     public function toggleStatus($id)
     {
@@ -366,12 +366,17 @@ class ApplicantController extends Controller
 
         return redirect()->route('applicants.create')->with('success', 'Application submitted successfully.');
     }
-        public function adminToggleStatus($id)
+    public function adminToggleStatus($id)
     {
         $applicant = Applicant::where('id', $id)->firstOrFail();
 
         $applicant->status = 2;
         $applicant->save();
+        // After setting applicant status to approved (e.g., status = 2)
+        if ($applicant->status == 2) {
+            Mail::to($applicant->user->email)->send(new ApplicationApproved($applicant->user));
+        }
+
 
         return redirect()->route('applicants.index')->with('success', 'Application approved successfully.');
     }

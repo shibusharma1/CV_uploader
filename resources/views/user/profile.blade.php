@@ -36,7 +36,7 @@
                                  width="120" height="120">
                             <div class="mt-2">
                                 <label class="btn btn-sm btn-outline-secondary">
-                                    Change Photo <input type="file" name="photo" class="d-none">
+                                    Change Photo <input type="file" name="image" class="d-none">
                                 </label>
                                 @error('photo') <div class="text-danger small">{{ $message }}</div> @enderror
                             </div>

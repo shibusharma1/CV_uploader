@@ -85,7 +85,7 @@ class UserController extends Controller
 
     public function updateProfile(Request $request)
     {
-        $user = auth()->user(); // Or fetch by ID
+        $user = auth()->user();
 
         $validated = $request->validate([
             'name_en' => 'required|string|max:255',
@@ -95,25 +95,28 @@ class UserController extends Controller
             'image' => 'nullable|image|max:2048',
         ]);
 
-        // if ($request->hasFile('image')) {
-        //     $path = $request->file('image')->store('user_photos', 'public');
-        //     $user->photo = $path;
-        // }
+        // Remove image and password from the validated array
+        unset($validated['image'], $validated['password']);
+
+        // Update base fields
+        $user->update($validated);
+
+        // Handle password update
+        if ($request->filled('password')) {
+            $user->password = Hash::make($request->password);
+        }
+
+        // Handle image update
         if ($request->hasFile('image')) {
             $file = $request->file('image');
             $filename = time() . '_' . $file->getClientOriginalName();
             $file->move(public_path('user_photos'), $filename);
-
-            $user->image = 'user_photos/' . $filename; // Save relative path for asset()
+            $user->image = 'user_photos/' . $filename;
         }
 
-
-        if ($validated['password']) {
-            $user->password = Hash::make($validated['password']);
-        }
-
-        $user->update(array_filter($validated));
+        $user->save();
 
         return redirect()->back()->with('success', 'Profile updated successfully!');
     }
+
 }
