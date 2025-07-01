@@ -32,7 +32,7 @@
       <ol>
         <li>Fill out the online scholarship form available at <a href="#">biratnagarmun.gov.np</a></li>
         <li>Submit scanned documents: SEE marksheet, citizenship, recommendation letter, photo.</li>
-        <li>Deadline: <strong>Shrawan 15, 2082 strong></li>
+        <li>Deadline: <strong>Shrawan 15, 2082 <strong></li>
       </ol>
     </div>
   </div>

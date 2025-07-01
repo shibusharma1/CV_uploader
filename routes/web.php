@@ -106,6 +106,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::put('/{applicant}', [ApplicantController::class, 'update'])->name('update'); // Update applicant
         Route::delete('/{applicant}', [ApplicantController::class, 'destroy'])->name('destroy'); // Delete
         Route::get('/show/{applicant}', [ApplicantController::class, 'show'])->name('show');// Show details
+        Route::get('/showcollege', [ApplicantController::class, 'showUserColleges'])->name('showUserColleges');// Show details
         Route::get('/show-admitcard/{applicant}', [ApplicantController::class, 'showAdmitCard'])->name('show-admitcard');// Show details
         // Toggle status to submitted (status = 2)
         Route::patch('/{id}/toggle-status', [ApplicantController::class, 'toggleStatus'])->name('toggle-status');

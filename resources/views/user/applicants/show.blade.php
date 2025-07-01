@@ -248,8 +248,9 @@
         <div class="row mt-2">
             <div class="col-6 col-sm-6 col-md-6 col-lg-6">
                 <div class="text-end mb-3 mx-5">
-                    <button class="btn btn-primary" onclick="printForm()"><svg xmlns="http://www.w3.org/2000/svg"
-                            width="16" height="16" fill="currentColor" class="bi bi-printer" viewBox="0 0 16 16">
+                    <button class="btn btn-sm btn-outline-primary d-flex gap-1" onclick="printForm()"
+                        style="place-self: end;"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                            fill="currentColor" class="bi bi-printer" viewBox="0 0 16 16">
                             <path d="M2.5 8a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1" />
                             <path
                                 d="M5 1a2 2 0 0 0-2 2v2H2a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h1v1a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-1h1a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-1V3a2 2 0 0 0-2-2zM4 3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2H4zm1 5a2 2 0 0 0-2 2v1H2a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v-1a2 2 0 0 0-2-2zm7 2v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1" />
@@ -301,7 +302,7 @@
 
                         <div class="printable-section-group">
                             <h3 class="printable-section-title-line">३. अध्ययन गर्न चाहेको विद्यालयको नामः</h3>
-                            <p class="printable-field-value ms-2"> {{ $applicant->School_name ?? 'N/A' }}</p>
+                            <p class="printable-field-value ms-2">{{ $firstPriorityCollege->school_name ?? 'N/A' }}</p>
                         </div>
 
                         <div class="mb-1">
@@ -519,7 +520,8 @@
                                 <p class="printable-field-value-half">नाम : {{ $applicant->name_ne ?? 'N/A' }}</p>
                                 <p class="printable-field-value-half">सही: <span class="signature-placeholder">Not
                                         Attached</span></p>
-                                <p class="printable-field-value-full">मिति : {{ $applicant->created_at ?? 'N/A' }}</p>
+                                <p class="printable-field-value-full">मिति : {{
+                                    optional($applicant->created_at)->format('Y-m-d') ?? 'N/A' }}</p>
                             </div>
                         </div>
                     </div>
@@ -563,8 +565,56 @@
                             @endforeach
                         </div>
                     </div>
-
                 </div>
+                <div id="prioritySchoolsSection" class="border rounded p-4 shadow-sm bg-white mt-3">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="text-primary fw-bold mb-0">प्राथमिकताका विद्यालयहरू</h5>
+                        <button class="btn btn-sm btn-outline-primary d-flex gap-1 align-items-center"
+                            onclick="printSchoolList()">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                class="bi bi-printer" viewBox="0 0 16 16">
+                                <path d="M2.5 8a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1" />
+                                <path
+                                    d="M5 1a2 2 0 0 0-2 2v2H2a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h1v1a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-1h1a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-1V3a2 2 0 0 0-2-2zM4 3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2H4zm1 5a2 2 0 0 0-2 2v1H2a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v-1a2 2 0 0 0-2-2zm7 2v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1" />
+                            </svg>
+                            प्रिन्ट
+                        </button>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-bordered align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>प्राथमिकता</th>
+                                    <th>विद्यालयको नाम</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>१</td>
+                                    <td>{{ $school1 ?? 'विद्यालय चयन गरिएको छैन' }}</td>
+                                </tr>
+                                <tr>
+                                    <td>२</td>
+                                    <td>{{ $school2 ?? 'विद्यालय चयन गरिएको छैन' }}</td>
+                                </tr>
+                                <tr>
+                                    <td>३</td>
+                                    <td>{{ $school3 ?? 'विद्यालय चयन गरिएको छैन' }}</td>
+                                </tr>
+                                <tr>
+                                    <td>४</td>
+                                    <td>{{ $school4 ?? 'विद्यालय चयन गरिएको छैन' }}</td>
+                                </tr>
+                                <tr>
+                                    <td>५</td>
+                                    <td>{{ $school5 ?? 'विद्यालय चयन गरिएको छैन' }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
@@ -591,7 +641,7 @@
         <span class="btn btn-warning">Application is under review</span>
         @else
         <div class="text-center no-print">
-            <button class="btn btn-primary" onclick="printSection('printable-form-container')">Print
+            <button class="btn btn-primary d-none" onclick="printSection('printable-form-container')">Print
                 Application</button>
         </div>
         @endif
@@ -614,12 +664,34 @@
             aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-lg">
                 <div class="modal-content shadow-sm">
-                    <div class="modal-header text-black shadow-sm">
-                        <h5 class="modal-title" id="documentPreviewLabel">कागजात पूर्वावलोकन</h5>
-                        <button type="button" class="btn-close btn-close-black" data-bs-dismiss="modal"
-                            aria-label="Close"></button>
+                    <!-- Modal Header -->
+                    <div
+                        class="modal-header bg-light border-bottom shadow-sm d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5 class="modal-title fw-semibold text-primary" id="documentPreviewLabel">
+                                📄 कागजात पूर्वावलोकन
+                            </h5>
+                            <small class="text-muted d-block">Preview and print uploaded document</small>
+                        </div>
+                        <div class="d-flex align-items-center gap-2">
+                            <!-- Print Button -->
+                            <button class="btn btn-sm btn-outline-primary d-flex align-items-center gap-1"
+                                onclick="printModal()">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                    class="bi bi-printer" viewBox="0 0 16 16">
+                                    <path d="M2.5 8a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1" />
+                                    <path
+                                        d="M5 1a2 2 0 0 0-2 2v2H2a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h1v1a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-1h1a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-1V3a2 2 0 0 0-2-2zM4 3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2H4zm1 5a2 2 0 0 0-2 2v1H2a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v-1a2 2 0 0 0-2-2zm7 2v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1" />
+                                </svg>
+                                <span>प्रिन्ट</span>
+                            </button>
+
+                            <!-- Close Button -->
+                            <button type="button" class="btn-close btn-close-black" data-bs-dismiss="modal"
+                                aria-label="Close"></button>
+                        </div>
                     </div>
-                    <div class="modal-body text-center">
+                    <div class="modal-body text-center printable-modal-container">
                         <img id="modalDocumentImage" src="" alt="Preview" class="img-fluid rounded shadow"
                             style="max-height: 500px;">
                     </div>
@@ -627,21 +699,23 @@
             </div>
         </div>
     </div>
-        <script>
-            function setDocumentPreview(url, label) {
+    <script>
+        function setDocumentPreview(url, label) {
         document.getElementById('modalDocumentImage').src = url;
         document.getElementById('documentPreviewLabel').textContent = label;
     }
-        </script>
+    </script>
 
 
 
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous">
-                    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-        </script>
-        <script>
-            function confirmSubmission() {
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous">
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11">
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    </script>
+    <script>
+        function confirmSubmission() {
         Swal.fire({
             title: 'Are you sure?',
             text: 'Do you want to submit the application?',
@@ -671,12 +745,12 @@
             }
         });
     }
-        </script>
+    </script>
 
 
-
-        <script>
-            function printForm() {
+    {{-- Script to print the form --}}
+    <script>
+        function printForm() {
         const formContainer = document.querySelector('.printable-form-container');
 
         // Clone the target content
@@ -737,9 +811,150 @@
             }, 500); // slight delay to ensure styles apply
         };
     }
-        </script>
+    </script>
+    {{-- script to print priority printSchoolList --}}
+    <script>
+        function printSchoolList() {
+               const userName = '{{ $applicant->user->name_en ?? "User" }}';
+           const userEmail = '{{ $applicant->user->email ?? "Email" }}';
+        const formContainer = document.getElementById('prioritySchoolsSection');
 
+        // Clone the full section, not just the table
+        const contentClone = formContainer.cloneNode(true);
 
+        // Create a hidden iframe
+        const iframe = document.createElement('iframe');
+        iframe.style.position = 'fixed';
+        iframe.style.right = '0';
+        iframe.style.bottom = '0';
+        iframe.style.width = '0';
+        iframe.style.height = '0';
+        iframe.style.border = 'none';
+        document.body.appendChild(iframe);
+
+        const doc = iframe.contentWindow.document;
+
+        // Copy stylesheets and inline styles from original page
+        const styles = Array.from(document.querySelectorAll('link[rel="stylesheet"], style'))
+            .map(style => style.outerHTML)
+            .join('\n');
+
+        doc.open();
+        doc.write(`
+            <html>
+                <head>
+                    <title>Scholarship Program 2082-${userName} - ${userEmail}</title>
+                    ${styles}
+                    <style>
+                        @media print {
+                            @page {
+                                size: A4 portrait;
+                                margin: 1cm;
+                            }
+                            body {
+                                font-family: 'Devanagari', 'Arial', sans-serif;
+                                padding: 1cm;
+                                background-color: white;
+                            }
+                            .btn, .bi { display: none !important; } /* Hide print button/icon */
+                        }
+                        table {
+                            width: 100%;
+                            border-collapse: collapse;
+                        }
+                        th, td {
+                            border: 1px solid #dee2e6;
+                            padding: 10px;
+                            text-align: left;
+                        }
+                        th {
+                            background-color: #f8f9fa;
+                        }
+                    </style>
+                </head>
+                <body>
+                    ${contentClone.innerHTML}
+                </body>
+            </html>
+        `);
+        doc.close();
+
+        iframe.onload = function () {
+            setTimeout(() => {
+                iframe.contentWindow.focus();
+                iframe.contentWindow.print();
+                document.body.removeChild(iframe);
+            }, 500); // Delay ensures styles are applied
+        };
+    }
+    </script>
+
+    {{-- Script to print the Form --}}
+    <script>
+        function printModal() {
+        const formContainer = document.querySelector('.printable-modal-container');
+          const userName = '{{ $applicant->user->name_en ?? "User" }}';
+           const userEmail = '{{ $applicant->user->email ?? "Email" }}';
+
+        // Clone the target content
+        const contentClone = formContainer.cloneNode(true);
+
+        // Create hidden iframe
+        const iframe = document.createElement('iframe');
+        iframe.style.position = 'fixed';
+        iframe.style.right = '0';
+        iframe.style.bottom = '0';
+        iframe.style.width = '0';
+        iframe.style.height = '0';
+        iframe.style.border = 'none';
+        document.body.appendChild(iframe);
+
+        const doc = iframe.contentWindow.document;
+
+        // Grab all existing <link> and <style> tags from the original document
+        const styles = Array.from(document.querySelectorAll('link[rel="stylesheet"], style'))
+            .map(style => style.outerHTML)
+            .join('\n');
+
+        doc.open();
+        doc.write(`
+            <html>
+                <head>
+                    <title>Scholarship Program 2082-${userName} - ${userEmail}</title>
+                    ${styles}
+                    <style>
+                        @media print {
+                            @page {
+                                size: A4 portrait;
+                                margin: 1cm;
+                            }
+                            html, body {
+                                width: 210mm;
+                                height: 297mm;
+                                overflow: hidden;
+                            }
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="printable-form-container">
+                        ${contentClone.innerHTML}
+                    </div>
+                </body>
+            </html>
+        `);
+        doc.close();
+
+        // Wait for iframe to load styles and then print
+        iframe.onload = function () {
+            setTimeout(() => {
+                iframe.contentWindow.focus();
+                iframe.contentWindow.print();
+                document.body.removeChild(iframe);
+            }, 500); // slight delay to ensure styles apply
+        };
+    }
+    </script>
 </body>
 
 </html>

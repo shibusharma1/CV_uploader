@@ -81,12 +81,129 @@
                     <input type="text" id="student_name_english" name="name_en" class="form-control form-control-custom"
                         style="text-transform: uppercase;" value="{{ $user->name_en }}" required>
                 </div>
-                <div class="form-group-flex">
+                {{-- <div class="form-group-flex">
                     <label for="desired_school" class="form-label-custom">३. अध्ययन गर्न चाहेको विद्यालयको नामः</label>
+                    <select id="desired_school" name="school_name" class="form-control form-control-custom" required>
+                        <option value="" disabled selected>विद्यालय छान्नुहोस्</option>
+                        @foreach($colleges as $college)
+                        <option value="{{ $college->name }}">{{ $college->name }}</option>
+                        @endforeach
+                    </select>
+                </div> --}}
+
+
+
+
+                <!-- Trigger Button -->
+                <div class="form-group-flex mb-3">
+                    <label class="form-label-custom d-block">३. अध्ययन गर्न चाहेको विद्यालयहरूको प्राथमिकता
+                        छान्नुहोस्</label>
+                    {{-- <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal"
+                        data-bs-target="#priorityModal">
+                        प्राथमिकता सेट गर्नुहोस्
+                    </button> --}}
                     <input type="text" id="desired_school" name="school_name" class="form-control form-control-custom"
-                        required>
+                        placeholder="प्राथमिकता सेट गर्नुहोस्" data-bs-toggle="modal" data-bs-target="#priorityModal">
                 </div>
 
+                <!-- Hidden Inputs for Form Submission -->
+                <div id="priorityHiddenInputs"></div>
+                <!-- Priority Modal -->
+                <div class="modal fade" id="priorityModal" tabindex="-1" aria-labelledby="priorityModalLabel"
+                    aria-hidden="true">
+                    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="priorityModalLabel">३. अध्ययन गर्न चाहेको विद्यालयहरूको
+                                    प्राथमिकता छान्नुहोस्</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="बन्द गर्नुहोस्"></button>
+                            </div>
+
+                            <div class="modal-body">
+                                <div class="row">
+                                    {{-- @php $priorities = range(1, 5); @endphp
+                                    @foreach ($priorities as $priority)
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">प्राथमिकता {{ $priority }}</label>
+                                        <select name="priority{{ $priority }}" class="form-select college-dropdown">
+                                            <option value="">-- विद्यालय छान्नुहोस् --</option>
+                                            @foreach ($colleges as $college)
+                                            <option value="{{ $college->id }}">{{ $college->school_name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    @endforeach --}}
+
+                                       @php $priorities = range(1, 5); @endphp
+                                    @foreach ($priorities as $priority)
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">प्राथमिकता {{ $priority }}</label>
+                                        <select name="priority{{ $priority }}" class="form-select  college-dropdown" required>
+                                            <option value="">-- विद्यालय छान्नुहोस् --</option>
+                                            @foreach ($colleges as $college)
+                                            <option value="{{ $college->id }}">{{ $college->school_name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    @endforeach
+                                </div>
+                            </div>
+
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-success" id="savePrioritySelection"
+                                    data-bs-dismiss="modal">
+                                    सुरक्षित गर्नुहोस्
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <script>
+                    document.addEventListener('DOMContentLoaded', function () {
+    const dropdowns = document.querySelectorAll('.college-dropdown');
+    const hiddenInputWrapper = document.getElementById('priorityHiddenInputs');
+
+    function updateHiddenInputs() {
+        hiddenInputWrapper.innerHTML = ''; // Clear all before update
+
+        dropdowns.forEach((dropdown, index) => {
+            const selected = dropdown.value;
+            if (selected) {
+                const inputPriority = document.createElement('input');
+                inputPriority.type = 'hidden';
+                inputPriority.name = `college_priorities[${index + 1}]`;
+                inputPriority.value = selected;
+                hiddenInputWrapper.appendChild(inputPriority);
+            }
+        });
+    }
+
+    // Prevent duplicate college selection
+    dropdowns.forEach(dropdown => {
+        dropdown.addEventListener('change', () => {
+            const selectedValues = Array.from(dropdowns).map(d => d.value).filter(Boolean);
+
+            dropdowns.forEach(d => {
+                const currentValue = d.value;
+                Array.from(d.options).forEach(option => {
+                    if (option.value !== currentValue && selectedValues.includes(option.value)) {
+                        option.disabled = true;
+                    } else {
+                        option.disabled = false;
+                    }
+                });
+            });
+        });
+    });
+
+    // Save selections to hidden inputs
+    document.getElementById('savePrioritySelection').addEventListener('click', function () {
+        updateHiddenInputs();
+    });
+});
+                </script>
                 {{-- <div class="form-group-flex" style="align-items: flex-start;">
                     <label class="form-label-custom">४. छात्रवृत्तिको लागि आवेदन दिन चाहेको समूह (कुनै एकमा मात्र चिन्ह
                         लगाउने):</label>

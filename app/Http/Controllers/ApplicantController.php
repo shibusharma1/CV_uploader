@@ -4,16 +4,18 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Models\Applicant;
 use App\Models\Auth\Auth;
+use App\Models\CollegeList;
 use App\Models\ProvinceData;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use App\Mail\ApplicationSuccess;
 use App\Models\ApplicantAddress;
 use App\Mail\ApplicationApproved;
-use App\Mail\ApplicationSuccess;
 use App\Models\ApplicantDocuments;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
+use App\Models\ApplicantCollegeSelection;
 
 class ApplicantController extends Controller
 {
@@ -35,7 +37,7 @@ class ApplicantController extends Controller
     public function create()
     {
         $user = auth()->user();
-
+        $colleges = CollegeList::all();
         // Try to get applicant record for the logged-in user
         $applicant = $user->applicant;
         // Fetch only the distinct provinces
@@ -50,14 +52,14 @@ class ApplicantController extends Controller
 
             // Check status and return appropriate view
             if ($applicant->status == 0) {
-                return view('user.applicants.index', compact('user', 'applicants'));
+                return view('user.applicants.index', compact('user', 'applicants', 'colleges'));
             } else {
-                return view('user.applicants.message', compact('user', 'applicants'));
+                return view('user.applicants.message', compact('user', 'applicants', 'colleges'));
             }
         }
 
         // No applicant record found, show create page
-        return view('user.applicants.create', compact('user', 'provinces'));
+        return view('user.applicants.create', compact('user', 'provinces', 'colleges'));
     }
 
 
@@ -89,7 +91,6 @@ class ApplicantController extends Controller
     // Store new applicant with related address & documents
     public function store(Request $request)
     {
-
         // Check if the authenticated user already has an applicant record
         if (auth()->user()->applicant) {
             return redirect()->back()->with('error', 'You have already submitted an application.');
@@ -183,10 +184,29 @@ class ApplicantController extends Controller
         }
 
 
+
         // Save documents related to user (assuming user->documents() relation exists)
         if (!empty($documentData)) {
             $user->documents()->create($documentData);
         }
+
+
+        // Optional: Clear old selections
+        $user->collegeSelections()->detach();
+
+        for ($i = 1; $i <= 5; $i++) {
+            $collegeId = $request->input('priority' . $i);
+
+            if ($collegeId) {
+                $user->collegeSelections()->attach($collegeId, [
+                    'priority' => $i
+                ]);
+            }
+        }
+
+
+
+        // dd($request->all());
         // Mail::to($user->email)->send(new ApplicationSuccess($user));
         return redirect()->route('applicants.show', Auth::user()->id)
             ->with('success', 'Applicant created successfully.');
@@ -337,6 +357,22 @@ class ApplicantController extends Controller
     {
         $applicant = Applicant::with('user')->where('user_id', $id)->firstOrFail();
 
+        $user = auth()->user();
+
+
+
+        // ✅ Corrected line:
+        $selectedColleges = $user->collegeSelections()->orderBy('priority')->get();
+
+        $firstPriorityCollege = $selectedColleges->where('pivot.priority', 1)->first();
+        // Assigning school names to variables based on priority
+        $school1 = $selectedColleges->firstWhere('pivot.priority', 1)?->school_name ?? null;
+        $school2 = $selectedColleges->firstWhere('pivot.priority', 2)?->school_name ?? null;
+        $school3 = $selectedColleges->firstWhere('pivot.priority', 3)?->school_name ?? null;
+        $school4 = $selectedColleges->firstWhere('pivot.priority', 4)?->school_name ?? null;
+        $school5 = $selectedColleges->firstWhere('pivot.priority', 5)?->school_name ?? null;
+
+
         $provinces = ProvinceData::select('STATE_CODE', 'STATE_NAME_NEP')->distinct()->get();
         $districts = ProvinceData::select('DISTRICT_CODE', 'DISTRICT_NAME_NEP')->distinct()->get();
         $locals = ProvinceData::select('LOCAL_BODY_CODE', 'LOCAL_BODY_NAME_NEP')->distinct()->get();
@@ -349,11 +385,9 @@ class ApplicantController extends Controller
             return redirect()->back()->with('error', 'You haven\'t applied yet. Please apply first.');
         }
 
-        // if (in_array($applicant->user->role, [0, 1])) {
-        //     return view('user.applicants.show', compact('applicant', 'provinceMap', 'districtMap', 'localMap'));
-        // } else {
-            return view('user.applicants.show', compact('applicant', 'provinceMap', 'districtMap', 'localMap'));
-        // }
+
+        return view('user.applicants.show', compact('applicant', 'provinceMap', 'districtMap', 'localMap', 'firstPriorityCollege', 'school1', 'school2', 'school3', 'school4', 'school5'));
+
     }
     public function toggleStatus($id)
     {
@@ -380,7 +414,16 @@ class ApplicantController extends Controller
 
         return redirect()->route('applicants.index')->with('success', 'Application approved successfully.');
     }
+    public function showUserColleges()
+    {
+
+        return view('user.selected-colleges', compact('selectedColleges', 'firstPriorityCollege'));
+    }
+
 
 
 }
+
+
+
 ?>
