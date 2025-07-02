@@ -15,13 +15,19 @@
             </li>
 
             <li class="nav-item">
-                <a class="nav-link" href="{{ route('applicants.create')}}">Apply for Schoolarship</a>
+                <a class="nav-link" href="{{ route('applicants.create')}}">Apply for Scholarship</a>
             </li>
 
             <li class="nav-item">
-                <a class="nav-link" target="_blank" href="{{ route('applicants.show', Auth::user()->id) }}">Schoolarship Status</a>
+                <a class="nav-link" target="_blank" href="{{ route('applicants.show', Auth::user()->id) }}">Scholarship
+                    Status</a>
             </li>
 
+            <li class="nav-item">
+                <a class="nav-link" target="_blank" href="{{ asset('संस्थागत विद्यालय छात्रवृत्ति वितरण कार्यविधि, २०८१.pdf') }}" download>
+                    छात्रवृत्ति वितरण कार्यविधि, २०८१
+                </a>
+            </li>
             {{-- <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Introduction</a>
                 <ul class="dropdown-menu">
@@ -70,8 +76,8 @@
                     $photo = $user->applicantDocuments->passport_photo ?? null;
                     @endphp
 
-                    <img src="{{ $photo ? asset( $photo ) : asset('Biratnagar_logo.png') }}" alt="{{ Auth::user()->name_en }}"
-                        class="user-img me-2" />
+                    <img src="{{ Auth::user()->image ? asset( Auth::user()->image ) : asset('Biratnagar_logo.png') }}"
+                        alt="{{ Auth::user()->name_en }}" class="user-img me-2" />
                     <span>{{ Auth::user()->name_en }}</span>
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end">

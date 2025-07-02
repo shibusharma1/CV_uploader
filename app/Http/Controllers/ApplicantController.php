@@ -14,6 +14,7 @@ use App\Mail\ApplicationApproved;
 use App\Models\ApplicantDocuments;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Storage;
 use App\Models\ApplicantCollegeSelection;
 
@@ -157,6 +158,19 @@ class ApplicantController extends Controller
         // Save address related to user (assuming user->address() relation exists)
         $user->address()->create($addressData);
 
+        // $request->validate([
+        //     'see_gradesheet' => 'nullable|file|max:1024', // 1MB = 1024KB
+        //     'community_school_document' => 'nullable|file|max:1024',
+        //     'citizenship_birth_certificate' => 'nullable|file|max:1024',
+        //     'disability_id_card' => 'nullable|file|max:1024',
+        //     'dalit_janjati_recommendation' => 'nullable|file|max:1024',
+        //     'bipanna_recommendation' => 'nullable|file|max:1024',
+        //     'physical_disability_certificate' => 'nullable|file|max:1024',
+        //     'movement_related_certificate' => 'nullable|file|max:1024',
+        //     'passport_size_photo' => 'nullable|file|max:1024',
+        // ]);
+
+
         // Define file fields for document uploads
         $fileFields = [
             'see_gradesheet',
@@ -184,7 +198,6 @@ class ApplicantController extends Controller
         }
 
 
-
         // Save documents related to user (assuming user->documents() relation exists)
         if (!empty($documentData)) {
             $user->documents()->create($documentData);
@@ -208,8 +221,12 @@ class ApplicantController extends Controller
 
         // dd($request->all());
         // Mail::to($user->email)->send(new ApplicationSuccess($user));
-        return redirect()->route('applicants.show', Auth::user()->id)
-            ->with('success', 'Applicant created successfully.');
+        // return redirect()->route('applicants.show', $user->id)
+        //     ->with('success', 'आवेदन सफलतापूर्वक पेश गरिएको छ।');
+        return redirect()->route('applicants.show', encrypt($user->id))
+            ->with('success', 'आवेदन सफलतापूर्वक पेश गरिएको छ।');
+
+        // return redirect()->back()->with('success', 'Applicant created successfully.');
 
     }
 
@@ -355,11 +372,20 @@ class ApplicantController extends Controller
     }
     public function show($id)
     {
+
+        try {
+            $id = Crypt::decrypt($id);
+        } catch (\Illuminate\Contracts\Encryption\DecryptException $e) {
+            return redirect()->back()->with('error', 'अवैध अनुरोध।');
+        }
+
         $applicant = Applicant::with('user')->where('user_id', $id)->firstOrFail();
 
         $user = auth()->user();
 
-
+        if (!$applicant) {
+            return redirect()->back()->with('error', 'You haven\'t applied yet. Please apply first.');
+        }
 
         // ✅ Corrected line:
         $selectedColleges = $user->collegeSelections()->orderBy('priority')->get();
@@ -382,7 +408,7 @@ class ApplicantController extends Controller
         $localMap = $locals->pluck('LOCAL_BODY_NAME_NEP', 'LOCAL_BODY_CODE');
 
         if (!$applicant) {
-            return redirect()->back()->with('error', 'You haven\'t applied yet. Please apply first.');
+            return redirect()->route('user.dashboard')->with('error', 'You haven\'t applied yet. Please apply first.');
         }
 
 
@@ -407,9 +433,9 @@ class ApplicantController extends Controller
         $applicant->status = 2;
         $applicant->save();
         // After setting applicant status to approved (e.g., status = 2)
-        if ($applicant->status == 2) {
-            Mail::to($applicant->user->email)->send(new ApplicationApproved($applicant->user));
-        }
+        // if ($applicant->status == 2) {
+        //     Mail::to($applicant->user->email)->send(new ApplicationApproved($applicant->user));
+        // }
 
 
         return redirect()->route('applicants.index')->with('success', 'Application approved successfully.');

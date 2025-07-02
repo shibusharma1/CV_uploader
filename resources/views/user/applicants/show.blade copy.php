@@ -528,8 +528,7 @@
                     </div>
                 </div>
             </div>
-            {{-- <div class="col-6 col-sm-6 col-md-6 col-lg-6"> --}}
-                <div class="col-6 col-sm-6 col-md-6 col-lg-6 d-none d-md-block">
+            <div class="col-6 col-sm-6 col-md-6 col-lg-6">
                 <div class="d-flex justify-content-end">
                     <div class="col-12 mt-4">
                         <h5 class="text-primary fw-bold mb-3">अपलोड गरिएका कागजातहरू</h5>

@@ -60,8 +60,7 @@
                 <label class="form-label-custom d-block">३. अध्ययन गर्न चाहेको विद्यालयहरूको प्राथमिकता
                     छान्नुहोस्</label>
                 <input type="text" id="desired_school" name="school_name" class="form-control form-control-custom"
-                    placeholder="प्राथमिकता सेट गर्नुहोस्" data-bs-toggle="modal" data-bs-target="#priorityModal"
-                    readonly>
+                    placeholder="प्राथमिकता सेट गर्नुहोस्" data-bs-toggle="modal" data-bs-target="#priorityModal">
             </div>
 
             <!-- Hidden Inputs for Form Submission -->
@@ -163,17 +162,11 @@
             <div class="form-group-flex">
                 <label class="form-label-custom">५. जन्म मिति:</label>
                 <div class="d-flex w-100 align-items-center">
-                    {{-- <label for="dob_bs" class="form-label mb-0 me-2" style="font-size: 0.875rem;">वि.सं.</label>
-                    <input type="date" id="dob_bs" name="dob_bs" class="form-control form-control-custom me-3" required>
-                    --}}
                     <label for="dob_bs" class="form-label mb-0 me-2" style="font-size: 0.875rem;">वि.सं.</label>
-                    <input type="text" id="dob_bs" name="dob_bs"
-                        class="form-control form-control-custom me-3 bod-picker" placeholder="Select Date of Birth"
-                        autocomplete="off" required>
+                    <input type="date" id="dob_bs" name="dob_bs" class="form-control form-control-custom me-3" required>
 
-                    <label for="dob_ad" class="form-label mb-0 me-2 d-none" style="font-size: 0.875rem;">ई. सं.</label>
-                    <input type="hidden" id="dob_ad" name="dob_ad" class="form-control form-control-custom"
-                        max="2015-01-01" required value="{{ date('Y-m-d') }}">
+                    <label for="dob_ad" class="form-label mb-0 me-2" style="font-size: 0.875rem;">ई. सं.</label>
+                    <input type="date" id="dob_ad" name="dob_ad" class="form-control form-control-custom" required>
                 </div>
 
             </div>
@@ -262,7 +255,7 @@
                 <h4 class="sub-section-heading">ख) अस्थायी :</h4>
 
                 <div class="form-group-flex">
-                    <label for="temp_province" class="form-label-custom" style="min-width: 9rem;">क) प्रदेश:</label>
+                    <label for="temp_province" class="form-label-custom" style="min-width: 9rem;">क) प्रदेशঃ</label>
                     <select id="temp_province" name="temporary_province" class="form-select form-control-custom">
                         <option value="">प्रदेश चयन गर्नुहोस्</option>
                         @foreach($provinces as $p)
@@ -363,25 +356,28 @@
                     <option value="संस्थागत">संस्थागत</option>
                 </select>
             </div>
-            <div class="form-group-flex">
-                {{-- <label for="desired_stream" class="form-label-custom">१५. कक्षा ११ मा अध्ययन गर्न चाहेको विषय
+            {{-- <div class="form-group-flex">
+                <label for="desired_stream" class="form-label-custom">१५. कक्षा ११ मा अध्ययन गर्न चाहेको विषय
                     समूहः</label>
                 <input type="text" id="desired_class11_subject" name="desired_stream"
-                    class="form-control form-control-custom" required> --}}
+                    class="form-control form-control-custom" required>
+            </div> --}}
+
+            <div class="form-group-flex">
                 <label for="desired_stream" class="form-label-custom">
                     १५. कक्षा ११ मा अध्ययन गर्न चाहेको विषय समूहः
                 </label>
                 <select id="desired_class11_subject" name="desired_stream" class="form-select form-control-custom"
                     required>
                     <option value="">-- विषय समूह छान्नुहोस् --</option>
-                    <option value="Science">Science (विज्ञान)</option>
-                    <option value="Management">Management (व्यवस्थापन)</option>
-                    <option value="Humanities">Humanities (मानविकी)</option>
-                    <option value="Education">Education (शिक्षा)</option>
-                    <option value="Law">Law (कानून)</option>
+                    <option value="Science">Science</option>
+                    <option value="Management">Management</option>
+                    <option value="Humanities">Humanities</option>
+                    <option value="Education">Education</option>
+                    <option value="Law">Law</option>
                 </select>
-
             </div>
+
             <div class="form-group-flex">
                 <label for="see_symbol_number" class="form-label-custom">१६. SEE को सिम्बल नम्बरः</label>
                 <input type="text" id="see_symbol_number" name="see_symbol_number"
@@ -400,6 +396,7 @@
             <div id="gpaMessage" class="mb-3" style="
                                 display: none;
                                 color: #b72c2c;
+                                border-left: 5px solid #d32f2f;
                                 padding: 8px 12px;
                                 font-size: 0.90em;
                                 font-weight: 600;
@@ -427,142 +424,67 @@
         <div id="step5" class="step-content">
             <div class="document-upload-section">
                 <h3 class="section-heading">संलग्न गर्नु पर्ने कागजातहरुः (Upload all required documents)</h3>
-                <p class="text-danger small ms-1">
-                    कृपया २०० केबी भन्दा कम साइजको मात्र फोटो अपलोड गर्नुहोस्।<br>
-                    (Please upload image files only up to 200 KB in size.)
-                </p>
                 <div class="document-upload-grid">
                     <!-- SEE Marksheet Copy -->
-                    {{-- <label class="document-upload-label">
+                    <label class="document-upload-label">
                         <span>SEE को लब्धाङ्कपत्रको प्रतिलिपि:</span>
                         <input type="file" name="see_gradesheet" id="see_gradesheet" accept=".pdf,image/*" required>
                         <span id="file_see_gradesheet">Choose file...</span>
-                    </label> --}}
-                    <label class="document-upload-label">
-                        <span>SEE को लब्धाङ्कपत्रको प्रतिलिपि:</span>
-                        <input type="file" name="see_gradesheet" id="see_gradesheet" accept=".jpg,.jpeg,.png" required>
-                        <span id="file_see_gradesheet">Choose file...</span>
-                        <small id="see_gradesheet_error" class="text-danger d-block mt-1"></small>
                     </label>
-
                     <!-- Community School Document -->
-                    {{-- <label class="document-upload-label d-none" id="communityDocumentLabel">
-                        <span>सामुदायिक विद्यालय कागजात:</span>
-                        <input type="file" name="community_school_document" id="community_school_document"
-                            accept=".pdf,image/*">
-                        <span id="file_community_school_document">Choose file...</span>
-                    </label> --}}
                     <label class="document-upload-label d-none" id="communityDocumentLabel">
                         <span>सामुदायिक विद्यालय कागजात:</span>
                         <input type="file" name="community_school_document" id="community_school_document"
-                            accept=".jpg,.jpeg,.png">
-                        <span id="file_community_school_document">Choose file...</span>
-                        <small id="community_school_document_error" class="text-danger d-block mt-1"></small>
-                    </label>
-
-                    <!-- Citizenship/Birth Certificate Copy -->
-                    {{-- <label class="document-upload-label">
-                        <span>नागरिकता/जन्म प्रमाणपत्र:</span>
-                        <input type="file" name="citizenship_birth_certificate" id="citizenship_birth_certificate"
                             accept=".pdf,image/*">
-                        <span id="file_citizenship_birth_certificate">Choose file...</span>
-                    </label> --}}
+                        <span id="file_community_school_document">Choose file...</span>
+                    </label>
+                    <!-- Citizenship/Birth Certificate Copy -->
                     <label class="document-upload-label">
                         <span>नागरिकता/जन्म प्रमाणपत्र:</span>
                         <input type="file" name="citizenship_birth_certificate" id="citizenship_birth_certificate"
-                            accept=".jpg,.jpeg,.png">
+                            accept=".pdf,image/*">
                         <span id="file_citizenship_birth_certificate">Choose file...</span>
-                        <small id="citizenship_birth_certificate_error" class="text-danger d-block mt-1"></small>
                     </label>
-
-
                     <!-- Disability ID Copy -->
-                    {{-- <label class="document-upload-label d-none" id="DisabilityDocumentLabel">
+                    <label class="document-upload-label d-none" id="DisabilityDocumentLabel">
                         <span>अपांगता परिचयपत्र:</span>
                         <input type="file" name="disability_id_card" id="disability_id_card" accept=".pdf,image/*">
                         <span id="file_disability_id_card">Choose file...</span>
-                    </label> --}}
-                    <label class="document-upload-label d-none" id="DisabilityDocumentLabel">
-                        <span>अपांगता परिचयपत्र:</span>
-                        <input type="file" name="disability_id_card" id="disability_id_card" accept=".jpg,.jpeg,.png">
-                        <span id="file_disability_id_card">Choose file...</span>
-                        <small id="disability_id_card_error" class="text-danger d-block mt-1"></small>
                     </label>
-
                     <!-- Dalit/Janajati Recommendation -->
-                    {{-- <label class="document-upload-label d-none" id="DalitJanjatiDocumentLabel">
-                        <span>दलित/जनजाति सिफारिस:</span>
-                        <input type="file" name="dalit_janjati_recommendation" id="dalit_janjati_recommendation"
-                            accept=".pdf,image/*">
-                        <span id="file_dalit_janjati_recommendation">Choose file...</span>
-                    </label> --}}
-
                     <label class="document-upload-label d-none" id="DalitJanjatiDocumentLabel">
                         <span>दलित/जनजाति सिफारिस:</span>
                         <input type="file" name="dalit_janjati_recommendation" id="dalit_janjati_recommendation"
-                            accept=".jpg,.jpeg,.png">
-                        <span id="file_dalit_janjati_recommendation">Choose file...</span>
-                        <small id="dalit_janjati_recommendation_error" class="text-danger d-block mt-1"></small>
-                    </label>
-
-                    <!-- Impoverished Recommendation -->
-                    {{-- <label class="document-upload-label d-none" id="ImpoverishedDocumentLabel">
-                        <span>विपन्नता सिफारिस:</span>
-                        <input type="file" name="bipanna_recommendation" id="bipanna_recommendation"
                             accept=".pdf,image/*">
-                        <span id="file_bipanna_recommendation">Choose file...</span>
-                    </label> --}}
+                        <span id="file_dalit_janjati_recommendation">Choose file...</span>
+                    </label>
+                    <!-- Impoverished Recommendation -->
                     <label class="document-upload-label d-none" id="ImpoverishedDocumentLabel">
                         <span>विपन्नता सिफारिस:</span>
                         <input type="file" name="bipanna_recommendation" id="bipanna_recommendation"
-                            accept=".jpg,.jpeg,.png">
-                        <span id="file_bipanna_recommendation">Choose file...</span>
-                        <small id="bipanna_recommendation_error" class="text-danger d-block mt-1"></small>
-                    </label>
-
-                    <!-- Martyr Children Document -->
-                    {{-- <label class="document-upload-label d-none" id="MartyrChildrenDocumentLabel">
-                        <span>शहिदका छोराछोरीका लागि प्रमाणपत्र:</span>
-                        <input type="file" name="martyr_children_document" id="martyr_children_document"
                             accept=".pdf,image/*">
-                        <span id="file_martyr_children_document">Choose file...</span>
-                    </label> --}}
+                        <span id="file_bipanna_recommendation">Choose file...</span>
+                    </label>
+                    <!-- Martyr Children Document -->
                     <label class="document-upload-label d-none" id="MartyrChildrenDocumentLabel">
                         <span>शहिदका छोराछोरीका लागि प्रमाणपत्र:</span>
                         <input type="file" name="martyr_children_document" id="martyr_children_document"
-                            accept=".jpg,.jpeg,.png">
+                            accept=".pdf,image/*">
                         <span id="file_martyr_children_document">Choose file...</span>
-                        <small id="martyr_children_document_error" class="text-danger d-block mt-1"></small>
                     </label>
-
                     <!-- Movement Victims Document -->
-                    {{-- <label class="document-upload-label d-none" id="MomentVictimsDocumentLabel">
+                    <label class="document-upload-label d-none" id="MomentVictimsDocumentLabel">
                         <span>आन्दोलनका घाइते/शहिद/वेपत्ता प्रमाणपत्र:</span>
                         <input type="file" name="movement_victims_document" id="movement_victims_document"
                             accept=".pdf,image/*">
                         <span id="file_movement_victims_document">Choose file...</span>
-                    </label> --}}
-                    <label class="document-upload-label d-none" id="MomentVictimsDocumentLabel">
-                        <span>आन्दोलनका घाइते/शहिद/वेपत्ता प्रमाणपत्र:</span>
-                        <input type="file" name="movement_victims_document" id="movement_victims_document"
-                            accept=".jpg,.jpeg,.png">
-                        <span id="file_movement_victims_document">Choose file...</span>
-                        <small id="movement_victims_document_error" class="text-danger d-block mt-1"></small>
                     </label>
-
                     <!-- Passport Photo -->
-                    {{-- <label class="document-upload-label">
+                    <label class="document-upload-label">
                         <span>पासपोर्ट साइज फोटो:</span>
                         <input type="file" name="passport_size_photo" id="passport_size_photo" accept="image/*"
                             required>
                         <span id="file_passport_size_photo">Choose file...</span>
-                    </label> --}}
-                    <label class="document-upload-label">
-                        <span>पासपोर्ट साइज फोटो:</span>
-                        <input type="file" name="passport_size_photo" id="passport_size_photo" accept=".jpg,.jpeg,.png"
-                            required>
-                        <span id="file_passport_size_photo">Choose file...</span>
-                        <small id="passport_size_photo_error" class="text-danger d-block mt-1"></small>
                     </label>
                 </div>
                 <p class="required-docs-message">
@@ -583,25 +505,8 @@
 </div>
 
 <!-- Bootstrap JS (optional, for certain components like dropdowns, but good practice) -->
-{{-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
     xintegrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous">
-</script> --}}
-
-<!-- this should go after your </body> -->
-<script src="//code.jquery.com/jquery-3.7.1.slim.min.js"></script>
-<script src="//unpkg.com/nepali-date-picker@2.0.2/dist/nepaliDatePicker.min.js"></script>
-<link rel="stylesheet" href="//unpkg.com/nepali-date-picker@2.0.2/dist/nepaliDatePicker.min.css">
-
-<script>
-    $(".bod-picker").nepaliDatePicker({
-    dateFormat: "%D, %M %d, %y",
-    closeOnDateSelect: true
-});
-
-$("#clear-bth").on("click", function(event) {
-    $(".bod-picker").val('');
-});
-                
 </script>
 
 <script>
@@ -921,6 +826,8 @@ $("#clear-bth").on("click", function(event) {
     });
 </script>
 
+
+
 {{-- see GPA --}}
 <script>
     const seeGpaInput = document.getElementById('see_gpa');
@@ -1020,297 +927,6 @@ $("#clear-bth").on("click", function(event) {
             label.classList.remove('d-none');
         } else {
             label.classList.add('d-none');
-        }
-    });
-</script>
-
-
-{{-- Image validations --}}
-
-<script>
-    document.getElementById('see_gradesheet').addEventListener('change', function () {
-        const fileInput = this;
-        const file = fileInput.files[0];
-        const errorSpan = document.getElementById('see_gradesheet_error');
-        const labelSpan = document.getElementById('file_see_gradesheet');
-        errorSpan.textContent = '';
-        labelSpan.textContent = 'Choose file...';
-
-        if (file) {
-            const fileSizeKB = file.size / 1024;
-            const fileType = file.type;
-
-            const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
-
-            if (!allowedTypes.includes(fileType)) {
-                errorSpan.textContent = 'कृपया JPEG, JPG वा PNG फाइल मात्र अपलोड गर्नुहोस्। (Only JPEG, JPG, or PNG files are allowed.)';
-                fileInput.value = '';
-                return;
-            }
-
-            if (fileSizeKB > 200) {
-                errorSpan.textContent = 'कृपया २००KB भन्दा कम साइजको फाइल मात्र अपलोड गर्नुहोस्। (Please upload a file less than 200KB.)';
-                fileInput.value = '';
-                return;
-            }
-
-            labelSpan.textContent = file.name; // Show file name if valid
-        }
-    });
-</script>
-
-<script>
-    document.getElementById('community_school_document').addEventListener('change', function () {
-        const fileInput = this;
-        const file = fileInput.files[0];
-        const errorSpan = document.getElementById('community_school_document_error');
-        const labelSpan = document.getElementById('file_community_school_document');
-        errorSpan.textContent = '';
-        labelSpan.textContent = 'Choose file...';
-
-        if (file) {
-            const fileSizeKB = file.size / 1024;
-            const fileType = file.type;
-
-            const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
-
-            if (!allowedTypes.includes(fileType)) {
-                errorSpan.textContent = 'कृपया JPEG, JPG वा PNG फाइल मात्र अपलोड गर्नुहोस्। (Only JPEG, JPG, or PNG files are allowed.)';
-                fileInput.value = '';
-                return;
-            }
-
-            if (fileSizeKB > 200) {
-                errorSpan.textContent = 'कृपया २००KB भन्दा कम साइजको फाइल मात्र अपलोड गर्नुहोस्। (Please upload a file less than 200KB.)';
-                fileInput.value = '';
-                return;
-            }
-
-            labelSpan.textContent = file.name; // Show file name if valid
-        }
-    });
-</script>
-
-<script>
-    document.getElementById('citizenship_birth_certificate').addEventListener('change', function () {
-        const fileInput = this;
-        const file = fileInput.files[0];
-        const errorSpan = document.getElementById('citizenship_birth_certificate_error');
-        const labelSpan = document.getElementById('file_citizenship_birth_certificate');
-        errorSpan.textContent = '';
-        labelSpan.textContent = 'Choose file...';
-
-        if (file) {
-            const fileSizeKB = file.size / 1024;
-            const fileType = file.type;
-
-            const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
-
-            if (!allowedTypes.includes(fileType)) {
-                errorSpan.textContent = 'कृपया JPEG, JPG वा PNG फाइल मात्र अपलोड गर्नुहोस्। (Only JPEG, JPG, or PNG files are allowed.)';
-                fileInput.value = '';
-                return;
-            }
-
-            if (fileSizeKB > 200) {
-                errorSpan.textContent = 'कृपया २००KB भन्दा कम साइजको फाइल मात्र अपलोड गर्नुहोस्। (Please upload a file less than 200KB.)';
-                fileInput.value = '';
-                return;
-            }
-
-            labelSpan.textContent = file.name; // Show file name if valid
-        }
-    });
-</script>
-
-<script>
-    document.getElementById('disability_id_card').addEventListener('change', function () {
-        const fileInput = this;
-        const file = fileInput.files[0];
-        const errorSpan = document.getElementById('disability_id_card_error');
-        const labelSpan = document.getElementById('file_disability_id_card');
-        errorSpan.textContent = '';
-        labelSpan.textContent = 'Choose file...';
-
-        if (file) {
-            const fileSizeKB = file.size / 1024;
-            const fileType = file.type;
-
-            const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
-
-            if (!allowedTypes.includes(fileType)) {
-                errorSpan.textContent = 'कृपया JPEG, JPG वा PNG फाइल मात्र अपलोड गर्नुहोस्। (Only JPEG, JPG, or PNG files are allowed.)';
-                fileInput.value = '';
-                return;
-            }
-
-            if (fileSizeKB > 200) {
-                errorSpan.textContent = 'कृपया २००KB भन्दा कम साइजको फाइल मात्र अपलोड गर्नुहोस्। (Please upload a file less than 200KB.)';
-                fileInput.value = '';
-                return;
-            }
-
-            labelSpan.textContent = file.name; // Show file name if valid
-        }
-    });
-</script>
-
-<script>
-    document.getElementById('dalit_janjati_recommendation').addEventListener('change', function () {
-        const fileInput = this;
-        const file = fileInput.files[0];
-        const errorSpan = document.getElementById('dalit_janjati_recommendation_error');
-        const labelSpan = document.getElementById('file_dalit_janjati_recommendation');
-        errorSpan.textContent = '';
-        labelSpan.textContent = 'Choose file...';
-
-        if (file) {
-            const fileSizeKB = file.size / 1024;
-            const fileType = file.type;
-
-            const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
-
-            if (!allowedTypes.includes(fileType)) {
-                errorSpan.textContent = 'कृपया JPEG, JPG वा PNG फाइल मात्र अपलोड गर्नुहोस्। (Only JPEG, JPG, or PNG files are allowed.)';
-                fileInput.value = '';
-                return;
-            }
-
-            if (fileSizeKB > 200) {
-                errorSpan.textContent = 'कृपया २००KB भन्दा कम साइजको फाइल मात्र अपलोड गर्नुहोस्। (Please upload a file less than 200KB.)';
-                fileInput.value = '';
-                return;
-            }
-
-            labelSpan.textContent = file.name; // Show file name if valid
-        }
-    });
-</script>
-
-<script>
-    document.getElementById('bipanna_recommendation').addEventListener('change', function () {
-        const fileInput = this;
-        const file = fileInput.files[0];
-        const errorSpan = document.getElementById('bipanna_recommendation_error');
-        const labelSpan = document.getElementById('file_bipanna_recommendation');
-        errorSpan.textContent = '';
-        labelSpan.textContent = 'Choose file...';
-
-        if (file) {
-            const fileSizeKB = file.size / 1024;
-            const fileType = file.type;
-
-            const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
-
-            if (!allowedTypes.includes(fileType)) {
-                errorSpan.textContent = 'कृपया JPEG, JPG वा PNG फाइल मात्र अपलोड गर्नुहोस्। (Only JPEG, JPG, or PNG files are allowed.)';
-                fileInput.value = '';
-                return;
-            }
-
-            if (fileSizeKB > 200) {
-                errorSpan.textContent = 'कृपया २००KB भन्दा कम साइजको फाइल मात्र अपलोड गर्नुहोस्। (Please upload a file less than 200KB.)';
-                fileInput.value = '';
-                return;
-            }
-
-            labelSpan.textContent = file.name; // Show file name if valid
-        }
-    });
-</script>
-
-<script>
-    document.getElementById('martyr_children_document').addEventListener('change', function () {
-        const fileInput = this;
-        const file = fileInput.files[0];
-        const errorSpan = document.getElementById('martyr_children_document_error');
-        const labelSpan = document.getElementById('file_martyr_children_document');
-        errorSpan.textContent = '';
-        labelSpan.textContent = 'Choose file...';
-
-        if (file) {
-            const fileSizeKB = file.size / 1024;
-            const fileType = file.type;
-
-            const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
-
-            if (!allowedTypes.includes(fileType)) {
-                errorSpan.textContent = 'कृपया JPEG, JPG वा PNG फाइल मात्र अपलोड गर्नुहोस्। (Only JPEG, JPG, or PNG files are allowed.)';
-                fileInput.value = '';
-                return;
-            }
-
-            if (fileSizeKB > 200) {
-                errorSpan.textContent = 'कृपया २००KB भन्दा कम साइजको फाइल मात्र अपलोड गर्नुहोस्। (Please upload a file less than 200KB.)';
-                fileInput.value = '';
-                return;
-            }
-
-            labelSpan.textContent = file.name; // Show file name if valid
-        }
-    });
-</script>
-
-<script>
-    document.getElementById('movement_victims_document').addEventListener('change', function () {
-        const fileInput = this;
-        const file = fileInput.files[0];
-        const errorSpan = document.getElementById('movement_victims_document_error');
-        const labelSpan = document.getElementById('file_movement_victims_document');
-        errorSpan.textContent = '';
-        labelSpan.textContent = 'Choose file...';
-
-        if (file) {
-            const fileSizeKB = file.size / 1024;
-            const fileType = file.type;
-
-            const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
-
-            if (!allowedTypes.includes(fileType)) {
-                errorSpan.textContent = 'कृपया JPEG, JPG वा PNG फाइल मात्र अपलोड गर्नुहोस्। (Only JPEG, JPG, or PNG files are allowed.)';
-                fileInput.value = '';
-                return;
-            }
-
-            if (fileSizeKB > 200) {
-                errorSpan.textContent = 'कृपया २००KB भन्दा कम साइजको फाइल मात्र अपलोड गर्नुहोस्। (Please upload a file less than 200KB.)';
-                fileInput.value = '';
-                return;
-            }
-
-            labelSpan.textContent = file.name; // Show file name if valid
-        }
-    });
-</script>
-
-<script>
-    document.getElementById('passport_size_photo').addEventListener('change', function () {
-        const fileInput = this;
-        const file = fileInput.files[0];
-        const errorSpan = document.getElementById('passport_size_photo_error');
-        const labelSpan = document.getElementById('file_passport_size_photo');
-        errorSpan.textContent = '';
-        labelSpan.textContent = 'Choose file...';
-
-        if (file) {
-            const fileSizeKB = file.size / 1024;
-            const fileType = file.type;
-
-            const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
-
-            if (!allowedTypes.includes(fileType)) {
-                errorSpan.textContent = 'कृपया JPEG, JPG वा PNG फाइल मात्र अपलोड गर्नुहोस्। (Only JPEG, JPG, or PNG files are allowed.)';
-                fileInput.value = '';
-                return;
-            }
-
-            if (fileSizeKB > 200) {
-                errorSpan.textContent = 'कृपया २००KB भन्दा कम साइजको फाइल मात्र अपलोड गर्नुहोस्। (Please upload a file less than 200KB.)';
-                fileInput.value = '';
-                return;
-            }
-
-            labelSpan.textContent = file.name; // Show file name if valid
         }
     });
 </script>

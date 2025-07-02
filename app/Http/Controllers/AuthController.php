@@ -27,17 +27,18 @@ class AuthController extends Controller
         'password' => ['required'],
     ]);
 
+    
     // Attempt to log the user in
     if (Auth::attempt($credentials)) {
         $request->session()->regenerate();
 
         // Check if the user's email is verified
-        if (!Auth::user()->hasVerifiedEmail()) {
-            Auth::logout(); // Ensure no session remains
-            return redirect()->route('verification.notice')->withErrors([
-                'email' => 'Please verify your email before logging in.',
-            ]);
-        }
+        // if (!Auth::user()->hasVerifiedEmail()) {
+        //     // Auth::logout(); // Ensure no session remains
+        //     return redirect()->route('verification.notice')->withErrors([
+        //         'email' => 'Please verify your email before logging in.',
+        //     ]);
+        // }
 
         // Redirect based on user role
         return redirect()->route($this->redirectUser(Auth::user()));
@@ -60,7 +61,7 @@ class AuthController extends Controller
         $request->validate([
             'name_en' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'unique:users,email'],
-            'phone' => ['required', 'string', 'min:6'],
+            'phone' => ['required', 'string', 'min:10', 'unique:users,phone'],
             'password' => ['required', 'confirmed', 'min:6'],
         ]);
 
@@ -72,11 +73,12 @@ class AuthController extends Controller
             'role' => 2,
         ]);
 
-        event(new Registered($user)); // triggers email verification
+        // event(new Registered($user)); // triggers email verification
 
-        auth()->login($user);
+        // auth()->login($user);
+        return view('auth.login');
 
-        return redirect(route('verification.notice'));
+        // return redirect(route('verification.notice'));
     }
 
     public function logout(Request $request)

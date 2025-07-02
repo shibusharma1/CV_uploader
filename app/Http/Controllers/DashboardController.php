@@ -13,6 +13,10 @@ class DashboardController extends Controller
     //
     public function admin()
     {
+        // Check if role is 0 or 1
+        if (auth()->user()->role !== 0 && auth()->user()->role !== 1) {
+            return redirect()->back()->with('error', 'Unauthorized access.');
+        }
         $users = User::count();
         $applicants = Applicant::count();
         $pendingApplicants = Applicant::where('status', 0)->count();
@@ -46,13 +50,17 @@ class DashboardController extends Controller
             'maleUsers' => $maleUsers,
             'femaleUsers' => $femaleUsers,
             'otherUsers' => $otherUsers,
-            'scholarshipGroups'=> $scholarshipGroups,
-            'scholarshipCounts'=> $scholarshipCounts,
+            'scholarshipGroups' => $scholarshipGroups,
+            'scholarshipCounts' => $scholarshipCounts,
         ]);
     }
 
     public function user()
     {
+        // Check if role is 0 or 1
+        if (auth()->user()->role != 2) {
+            return redirect()->back()->with('error', 'Unauthorized access.');
+        }
         return view('user.dashboard', ['user' => Auth::user()]);
     }
 }

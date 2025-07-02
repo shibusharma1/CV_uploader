@@ -52,10 +52,11 @@
                                 @endif
                             </td>
                             <td>
-                                <a href="{{ route('applicants.show', Auth::user()->id) }}" target="_blank"
+                                <a href="{{ route('applicants.show', encrypt(Auth::user()->id)) }}" target="_blank"
                                     class="btn btn-sm btn-outline-primary">
                                     Preview
                                 </a>
+
                             </td>
                         </tr>
                         {{-- @empty

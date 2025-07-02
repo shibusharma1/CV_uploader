@@ -2,6 +2,11 @@
 @section('title', 'Register')
 @section('content')
 
+@if (Auth::check())
+    <script>
+        window.location.href = "{{ route('logout') }}";
+    </script>
+@endif
 <div class="auth-wrapper">
   <div class="auth-box">
     <h2 class="auth-title text-center">Create Your Account</h2>

@@ -69,7 +69,7 @@
                         <!-- Password -->
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label class="form-label">New Password</label>
+                                <label class="form-label">Password</label>
                                 <input type="password" name="password" 
                                        class="form-control @error('password') is-invalid @enderror">
                                 @error('password') <div class="invalid-feedback">{{ $message }}</div> @enderror

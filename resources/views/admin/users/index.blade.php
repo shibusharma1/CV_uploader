@@ -58,14 +58,22 @@
                                 <td class="d-flex justify-content-center gap-2">
                                     <a href="{{ url('users-list/show', $user->id) }}" class="btn btn-sm btn-info d-none"
                                         title="View"><i class="bi bi-eye"></i></a>
-                                    <a href="{{ url('users-list/edit', $user->id) }}" class="btn btn-sm btn-warning d-none"
-                                        title="Edit"><i class="bi bi-pencil-square"></i></a>
-                                    <form action="{{ url('users-list/destroy', $user->id) }}" method="POST"
+                                    <a href="{{ url('users-list/edit', $user->id) }}"
+                                        class="btn btn-sm btn-warning d-none" title="Edit"><i
+                                            class="bi bi-pencil-square"></i></a>
+                                    {{-- <form action="{{ url('users-list/destroy', $user->id) }}" method="POST"
                                         class="delete-form d-inline">
                                         @csrf @method('DELETE')
                                         <button type="button" class="btn btn-sm btn-danger delete-btn" title="Delete"><i
                                                 class="bi bi-trash-fill"></i></button>
-                                    </form>
+                                    </form> --}}
+                                    <a href="{{ route('users-list.destroy', $user->id) }}"
+                                        class="btn btn-sm btn-danger delete-btn" data-user-name="{{ $user->name }}"
+                                        data-delete-url="{{ route('users-list.destroy', $user->id) }}" title="Delete">
+                                        <i class="bi bi-trash-fill"></i>
+                                    </a>
+
+
                                 </td>
                             </tr>
                             @endif
@@ -86,23 +94,32 @@
     </div>
 </div>
 <script>
+// <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
     document.querySelectorAll('.delete-btn').forEach(button => {
-        button.addEventListener('click', function() {
-            const form = this.closest('form');
+        button.addEventListener('click', function(e) {
+            e.preventDefault(); // prevent default navigation
+            const deleteUrl = this.getAttribute('data-delete-url');
+            const userName = this.getAttribute('data-user-name') || 'यो प्रयोगकर्ता';
+
             Swal.fire({
-                title: 'Are you sure?',
-                text: "You won't be able to revert this!",
+                title: `${userName} लाई हटाउन निश्चित हुनुहुन्छ?`,
+                text: "यो कार्य फर्काउन सकिँदैन!",
                 icon: 'warning',
                 showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, delete it!'
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'हो, हटाउनुहोस्!',
+                cancelButtonText: 'रद्द गर्नुहोस्'
             }).then((result) => {
-                if (result.isConfirmed) form.submit();
-            })
-        })
-    })
+                if (result.isConfirmed) {
+                    window.location.href = deleteUrl; // navigate only if confirmed
+                }
+            });
+        });
+    });
 </script>
+
 <script>
     document.addEventListener('DOMContentLoaded', function () {
                                             document.querySelectorAll('.toggle-status-btn').forEach(function (btn) {

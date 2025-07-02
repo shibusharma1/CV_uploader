@@ -9,6 +9,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\ApplicantController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ForgotPasswordController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 
 /*
@@ -78,7 +79,7 @@ Route::post('/email/verification-notification', function (Request $request) {
 // ===============================
 // Authenticated User/Admin Routes
 // ===============================
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth'])->group(function () {
 
     // User dashboard
     Route::get('/dashboard/user', [DashboardController::class, 'user'])->name('user.dashboard');
@@ -110,12 +111,34 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/show-admitcard/{applicant}', [ApplicantController::class, 'showAdmitCard'])->name('show-admitcard');// Show details
         // Toggle status to submitted (status = 2)
         Route::patch('/{id}/toggle-status', [ApplicantController::class, 'toggleStatus'])->name('toggle-status');
-        Route::patch('/{id}/toggle-status', [ApplicantController::class, 'adminToggleStatus'])->name('admin-toggle-status');
+        Route::patch('/{id}/admin-toggle-status', [ApplicantController::class, 'adminToggleStatus'])->name('admin-toggle-status');
     });
     // ===============================
     // User Management Routes
     // ===============================
-    Route::resource('users-list', UserController::class); // Standard CRUD routes for users
+    // Index: List all users
+    Route::get('users-list', [UserController::class, 'index'])->name('users-list.index');
+
+    // Create: Show form to create a new user
+    Route::get('users-list/create', [UserController::class, 'create'])->name('users-list.create');
+
+    // Store: Handle POST to create new user
+    Route::post('users-list', [UserController::class, 'store'])->name('users-list.store');
+
+    // Show: Display a specific user
+    Route::get('users-list/{user}', [UserController::class, 'show'])->name('users-list.show');
+
+    // Edit: Show form to edit an existing user
+    Route::get('users-list/{user}/edit', [UserController::class, 'edit'])->name('users-list.edit');
+
+    // Update: Handle PUT/PATCH to update an existing user
+    Route::put('users-list/{user}', [UserController::class, 'update'])->name('users-list.update');
+    Route::patch('users-list/{user}', [UserController::class, 'update']); // optional
+
+    // Destroy: Delete a specific user (if you're using GET method for delete)
+    Route::get('users-list/destroy/{user}', [UserController::class, 'destroy'])->name('users-list.destroy');
+
+
 
     // Toggle user status (e.g., activate/deactivate)
     Route::patch('users/{user}/toggle-status', [UserController::class, 'toggleStatus'])->name('users.toggle-status');
@@ -125,77 +148,17 @@ Route::middleware(['auth', 'verified'])->group(function () {
 });
 
 
+// forget password
+Route::get('/forgot-password', [ForgotPasswordController::class, 'showEmailForm'])->name('forgot.password.form');
+Route::post('/forgot-password/send-otp', [ForgotPasswordController::class, 'sendOtp'])->name('forgot.password.sendOtp');
 
+Route::get('/verify-otp', [ForgotPasswordController::class, 'showOtpForm'])->name('forgot.password.otpForm');
+Route::post('/verify-otp', [ForgotPasswordController::class, 'verifyOtp'])->name('forgot.password.verifyOtp');
 
-
-// // ===============================
-// // Admin-only Routes (Roles 0 and 1)
-// // ===============================
-// Route::middleware(['auth', 'verified', 'role:0,1'])->group(function () {
-
-
-//     // Admin dashboard
-//     Route::get('/dashboard/admin', [DashboardController::class, 'admin'])->name('admin.dashboard');
-
-//     // Admin Management
-//     Route::resource('admins', AdminController::class);
-
-//     // Application Settings
-//     Route::get('/settings', [SettingController::class, 'edit'])->name('settings.edit');
-//     Route::post('/settings', [SettingController::class, 'update'])->name('settings.update');
-
-//     // Applicants Management
-//     Route::prefix('applicants')->name('applicants.')->group(function () {
-//         Route::get('/', [ApplicantController::class, 'index'])->name('index');
-//         Route::get('/create', [ApplicantController::class, 'create'])->name('create');
-//         Route::post('/', [ApplicantController::class, 'store'])->name('store');
-//         Route::get('/{applicant}/edit', [ApplicantController::class, 'edit'])->name('edit');
-//         Route::put('/{applicant}', [ApplicantController::class, 'update'])->name('update');
-//         Route::delete('/{applicant}', [ApplicantController::class, 'destroy'])->name('destroy');
-//         Route::get('/show/{applicant}', [ApplicantController::class, 'show'])->name('show');
-//     });
-
-//     // Toggle user status (e.g., activate/deactivate)
-//     Route::patch('users/{user}/toggle-status', [UserController::class, 'toggleStatus'])->name('users.toggle-status');
-//     // User profile
-//     Route::get('/profile', [UserController::class, 'profile'])->name('profile');
-//     Route::post('/profile/update', [UserController::class, 'updateProfile'])->name('profile.update');
-
-// });
-
-// // ===============================
-// // User-only Routes (Role 2)
-// // ===============================
-// Route::middleware(['auth', 'verified', 'role:2'])->prefix('user')->name('user.')->group(function () {
-
-//     // User Dashboard
-//     Route::get('/dashboard', [DashboardController::class, 'user'])->name('dashboard');
-
-//     // Applicants Management
-//     Route::prefix('applicants')->name('applicants.')->group(function () {
-//         Route::get('/', [ApplicantController::class, 'index'])->name('index');
-//         Route::get('/create', [ApplicantController::class, 'create'])->name('create');
-//         Route::post('/', [ApplicantController::class, 'store'])->name('store');
-//         Route::get('/{applicant}/edit', [ApplicantController::class, 'edit'])->name('edit');
-//         Route::put('/{applicant}', [ApplicantController::class, 'update'])->name('update');
-//         Route::delete('/{applicant}', [ApplicantController::class, 'destroy'])->name('destroy');
-//         Route::get('/show/{applicant}', [ApplicantController::class, 'show'])->name('show');
-//     });
-
-//     // User Management
-//     Route::resource('users', UserController::class);
-//     // Toggle user status (e.g., activate/deactivate)
-//     Route::patch('users/{user}/toggle-status', [UserController::class, 'toggleStatus'])->name('users.toggle-status');
-//     // User profile
-//     Route::get('/profile', [UserController::class, 'profile'])->name('profile');
-//     Route::post('/profile/update', [UserController::class, 'updateProfile'])->name('profile.update');
-// });
-
-
-
-
+Route::get('/reset-password', [ForgotPasswordController::class, 'showResetForm'])->name('forgot.password.resetForm');
+Route::post('/reset-password', [ForgotPasswordController::class, 'resetPassword'])->name('forgot.password.reset');
 
 // Fallback page
 Route::fallback(function () {
     return response()->view('errors.404', [], 404);
-}); 
+});
