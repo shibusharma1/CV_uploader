@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\OTPController;
 use Illuminate\Support\Facades\Artisan;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
@@ -23,12 +24,17 @@ use Illuminate\Foundation\Auth\EmailVerificationRequest;
 // ===============================
 // Public Routes
 // ===============================
+
+Route::get('/debug-middleware', function () {
+    dd(app()->make(\Illuminate\Contracts\Http\Kernel::class)->getMiddlewareGroups());
+});
+
 Route::get('/clear-all', function () {
     Artisan::call('config:clear');
     Artisan::call('cache:clear');
     Artisan::call('route:clear');
     Artisan::call('view:clear');
-    Artisan::call('optimize:clear');
+   
     return 'All cache cleared!';
 });
 
@@ -39,6 +45,10 @@ Route::get('/', fn() => view('home'))->name('home');
 // Route::get('/test', fn() => view('test'));
 Route::get('/admitcard', fn() => view('admitcard'));
 Route::get('/pdf', fn() => view('pdf'));
+
+
+Route::get('/verify-otp', [OTPController::class, 'showVerifyForm'])->name('otp.verify.page');
+Route::post('/verify-otp', [OTPController::class, 'verifyOtp'])->name('otp.verify');
 
 // ===============================
 // Authentication Routes
@@ -79,7 +89,7 @@ Route::post('/email/verification-notification', function (Request $request) {
 // ===============================
 // Authenticated User/Admin Routes
 // ===============================
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth','phone.verified'])->group(function () {
 
     // User dashboard
     Route::get('/dashboard/user', [DashboardController::class, 'user'])->name('user.dashboard');
@@ -105,7 +115,8 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/store', [ApplicantController::class, 'store'])->name('store');             // Store applicant
         Route::get('/{applicant}/edit', [ApplicantController::class, 'edit'])->name('edit');// Edit form
         Route::put('/{applicant}', [ApplicantController::class, 'update'])->name('update'); // Update applicant
-        Route::delete('/{applicant}', [ApplicantController::class, 'destroy'])->name('destroy'); // Delete
+        // Route::get('/delete-applicant/{applicant}', [ApplicantController::class, 'destroy'])->name('delete-applicant'); // Delete
+        Route::get('applicants/delete-applicant/{applicant}', [ApplicantController::class, 'destroy'])->name('delete-applicant');
         Route::get('/show/{applicant}', [ApplicantController::class, 'show'])->name('show');// Show details
         Route::get('/showcollege', [ApplicantController::class, 'showUserColleges'])->name('showUserColleges');// Show details
         Route::get('/show-admitcard/{applicant}', [ApplicantController::class, 'showAdmitCard'])->name('show-admitcard');// Show details

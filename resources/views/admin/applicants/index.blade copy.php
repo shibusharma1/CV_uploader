@@ -6,6 +6,9 @@
     <div class="content-wrapper p-4">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2 class="page-title">Applicants</h2>
+            {{-- <a href="{{ route('applicants.create') }}" class="btn btn-success btn-sm px-3 shadow-sm">
+                <i class="bi bi-plus-lg me-1"></i> Add Applicant
+            </a> --}}
         </div>
 
         <form method="GET" class="bg-light p-3 rounded-3 shadow-sm mb-4">
@@ -20,12 +23,23 @@
                     </div>
                 </div>
 
+                <!-- Search by School -->
+                {{-- <div class="col-md-3">
+                    <label class="form-label small text-muted" for="filter_school">School</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-white"><i class="bi bi-building"></i></span>
+                        <input id="filter_school" type="text" name="school_name" class="form-control"
+                            placeholder="School name" value="{{ request('school_name') }}">
+                    </div>
+                </div> --}}
+
                 <!-- Scholarship Group -->
                 <div class="col-md-2">
                     <label class="form-label small text-muted" for="filter_group">Scholarship Group</label>
                     <select id="filter_group" name="scholarship_group" class="form-select">
                         <option value="">All Groups</option>
-                        @foreach(['madhesi','vepata','jehendar','bipanna','janjati','apanga','shahid','dalit'] as $group)
+                        @foreach(['madhesi','vepata','jehendar','bipanna','janjati','apanga','shahid','dalit'] as
+                        $group)
                         <option value="{{ $group }}" {{ request('scholarship_group')===$group ? 'selected' : '' }}>
                             {{ ucfirst($group) }}
                         </option>
@@ -56,6 +70,7 @@
             </div>
         </form>
 
+
         @if(session('success'))
         <div class="alert alert-success">{{ session('success') }}</div>
         @endif
@@ -68,6 +83,7 @@
                             <th>#</th>
                             <th>Image</th>
                             <th>Name</th>
+                            {{-- <th>School</th> --}}
                             <th>Scholarship</th>
                             <th>Status</th>
                             <th>Applied On</th>
@@ -79,76 +95,79 @@
                         <tr class="text-center">
                             <td>{{ $applicants->firstItem() + $index }}</td>
                             <td class="text-start">
-                              <img src="{{ asset($applicant->user->documents->passport_size_photo ?? 'Biratnagar_logo.png') }}"
-                                    alt="Photo"
+                                @if(!empty($applicant->user->documents->passport_size_photo))
+                                <img src="{{ asset($applicant->user->documents->passport_size_photo) }}"
+                                    alt="Passport Size Photo"
                                     style="height:50px; width:50px; object-fit:cover; border-radius:50%; border:2px solid #e3e6f0; box-shadow:0 2px 6px rgba(0,0,0,0.08);"
-                                    class="img-fluid shadow-sm"
-                                    loading="lazy">
-
+                                    class="img-fluid shadow-sm" loading="lazy">
+                                @else
+                                <span class="text-muted">N/A</span>
+                                @endif
                             </td>
 
                             <td class="text-start">{{ $applicant->name_ne }}</td>
-
+                           
                             <td>{{ ucfirst($applicant->scholarship_group) }}</td>
                             <td>
-                                @php $status = $applicant->status; @endphp
+                                @php
+                                $status = $applicant->status;
+                                @endphp
+
                                 @if($status == 1)
                                 <span class="badge bg-warning text-dark">Pending</span>
                                 @elseif($status == 2)
                                 <span class="badge bg-success">Approved</span>
                                 @endif
+
                             </td>
                             <td>{{ $applicant->created_at->format('d M Y') }}</td>
                             <td>
                                 <a href="{{ route('applicants.show', encrypt($applicant->user->id)) }}" target="_blank"
                                     class="btn btn-sm btn-info">View</a>
-                                        {{-- <form action="{{ route('applicants.destroy', $applicant) }}" method="POST"
-                                        class="d-inline delete-form">
-                                        @csrf @method('DELETE')
-                                        <button type="button" class="btn btn-sm btn-danger delete-btn">Delete</button>
-                                    </form> --}}
-                                    <a href="{{ route('applicants.delete-applicant', $applicant->id) }}"
-   class="btn btn-sm btn-danger delete-btn">Delete</a>
-                            </td>
+
+                                {{-- <a href="{{ route('applicants.show', $applicant->user->id) }}" target="_blank"
+                                    class="btn btn-sm btn-info">View</a> --}}
+
+                                {{-- <a href="{{ route('applicants.edit', $applicant) }}"
+                                    class="btn btn-sm btn-warning">Edit</a> --}}
+                                {{-- <form action="{{ route('applicants.destroy', $applicant) }}" method="POST"
+                                    class="d-inline delete-form">
+                                    @csrf @method('DELETE')
+                                    <button type="button" class="btn btn-sm btn-danger delete-btn">Delete</button>
+                                </form> --}}
+                            {{-- </td>
                         </tr>
                         @empty
                         <tr>
                             <td colspan="7" class="text-center text-muted py-3">No applicants found.</td>
                         </tr>
                         @endforelse
-                    </tbody>
+                    </tbody> --}}
                 </table>
             </div>
-                <div class="p-3">
-                    {{ $applicants->links('pagination::bootstrap-5') }}
-                </div>
-            {{-- <div class="card-footer">
+            <div class="card-footer">
                 {{ $applicants->links() }}
-            </div> --}}
+            </div>
         </div>
     </div>
 </div>
-
 <script>
-    document.querySelectorAll('.delete-btn').forEach(button => {
-        button.addEventListener('click', function (e) {
-            e.preventDefault();
-            const url = this.getAttribute('href');
-
-            Swal.fire({
-                title: 'Are you sure?',
-                text: 'This action is irreversible.',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Yes, delete',
-                cancelButtonText: 'Cancel'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    window.location.href = url;
-                }
-            });
+    document.querySelectorAll('.delete-btn').forEach(btn => {
+    btn.addEventListener('click', function () {
+        const form = this.closest('form');
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'This action is irreversible.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, delete',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                form.submit();
+            }
         });
     });
+});
 </script>
-
 @endsection

@@ -26,7 +26,7 @@
             <div class="col-xl-3 col-md-6">
                 <div class="stats-card shadow-sm border rounded p-3 bg-white">
                     <div class="d-flex justify-content-between align-items-center mb-2">
-                        <div class="card-title fw-semibold text-muted">Total Applicants</div>
+                        <div class="card-title fw-semibold text-muted">Total Applications</div>
                         <i class="bi bi-file-earmark-text fs-3 text-success"></i>
                     </div>
                     <div class="card-value fs-4 fw-bold text-dark">{{ $applicants }}</div>

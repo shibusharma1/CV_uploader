@@ -87,8 +87,12 @@ class UserController extends Controller
 
     public function profile()
     {
-        $user = auth()->user(); // Or fetch by ID if needed
-        return view('user.profile', compact('user'));
+        $user = auth()->user();
+        if ($user->role == 0 || $user->role == 1 ) {
+            return view('admin.profile', compact('user'));
+        } else {
+            return view('user.profile', compact('user'));
+        }
     }
 
     public function updateProfile(Request $request)

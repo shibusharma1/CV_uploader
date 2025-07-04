@@ -702,11 +702,6 @@
         </div>
     </div>
     </div>
-        <!-- Bootstrap + Popper (must be before your custom scripts that use modals) -->
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-
     <script>
         function setDocumentPreview(url, label) {
         document.getElementById('modalDocumentImage').src = url;

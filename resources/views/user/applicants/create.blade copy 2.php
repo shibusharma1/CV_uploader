@@ -51,13 +51,13 @@
                 <label for="student_name_nepali" class="form-label-custom">१. विद्यार्थीको पूरा नाम, थर
                     :</label>
                 <input type="text" id="student_name_nepali" name="name_ne" class="form-control form-control-custom"
-                    required readonly>
+                    required>
             </div>
             <div class="form-group-flex">
                 <label for="student_name_english" class="form-label-custom">२. NAME IN ENGLISH (IN BLOCK
                     LETTER):</label>
                 <input type="text" id="student_name_english" name="name_en" class="form-control form-control-custom"
-                    style="text-transform: uppercase;" value="{{ auth()->user()->name_en }}" required readonly>
+                    style="text-transform: uppercase;" value="{{ auth()->user()->name_en }}" required>
             </div>
 
             <!-- Trigger Button -->
@@ -351,7 +351,7 @@
                 <label for="student_contact_number" class="form-label-custom">१३) विद्यार्थीको सम्पर्क
                     नम्बरः</label>
                 <input type="tel" id="student_contact_number" name="student_contact_number"
-                    class="form-control form-control-custom" placeholder="eg. 98XXXXXXXX" value="{{ auth()->user()->phone }}" readonly>
+                    class="form-control form-control-custom" placeholder="eg. 98XXXXXXXX">
             </div>
         </div>
 
@@ -621,8 +621,8 @@ $("#clear-bth").on("click", function(event) {
 <script>
     // Form Data storage
         let formData = {
-          name_ne: '{{ auth()->user()->name_en }}',
-          name_en: '{{ strtoupper(auth()->user()->name_en) }}',
+          name_ne: '',
+          name_en: '',
           school_name: '',
           scholarship_group: '',
           dob_bs: '',
@@ -644,7 +644,7 @@ $("#clear-bth").on("click", function(event) {
           grandfather_occupation: '',
           family_income_source: '',
           estimatedIncome: '',
-          student_contact_number: '{{ auth()->user()->phone }}',
+          student_contact_number: '',
           see_school_type: '',
           desiredClass11Subject: '',
           see_symbol_number: '',

@@ -19,7 +19,7 @@ class DashboardController extends Controller
         }
         $users = User::count();
         $applicants = Applicant::count();
-        $pendingApplicants = Applicant::where('status', 0)->count();
+        $pendingApplicants = Applicant::where('status', 1)->count();
         // Pie Chart Data (User Genders)
         $maleUsers = Applicant::where('gender', 0)->count();
         $femaleUsers = Applicant::where('gender', 1)->count();
@@ -60,7 +60,8 @@ class DashboardController extends Controller
         // Check if role is 0 or 1
         if (auth()->user()->role != 2) {
             return redirect()->back()->with('error', 'Unauthorized access.');
-        }
+        }else{
         return view('user.dashboard', ['user' => Auth::user()]);
+        }
     }
 }

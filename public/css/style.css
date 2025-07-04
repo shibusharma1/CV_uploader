@@ -6,7 +6,7 @@ body {
 
 /* Top section styling */
 .topbar-main {
-    height: 22vh; /* h-[22vh] */
+    /* height: 22vh; h-[22vh] */
     background-color: white; /* bg-white */
     color: white; /* text-white - though overridden by specific text colors */
     padding-left: 1.5rem; /* px-6 */
@@ -105,7 +105,7 @@ body {
 
 /* Marquee section styling */
 .marquee-container {
-    height: 8vh; /* h-[8vh] */
+    height: 50px; /* h-[8vh] */
     background-color: #114499; /* bg-[#114499] */
     overflow: hidden; /* overflow-hidden */
     position: relative; /* relative */

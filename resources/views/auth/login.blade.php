@@ -3,9 +3,9 @@
 @section('content')
 
 @if (Auth::check())
-    <script>
-        window.location.href = "{{ route('logout') }}";
-    </script>
+<script>
+    window.location.href = "{{ route('logout') }}";
+</script>
 @endif
 
 <div class="row g-0 align-items-center">
@@ -53,10 +53,9 @@
     <div class="col-12 col-md-6">
         <div class="auth-wrapper">
             <div class="ratio ratio-16x9">
-                <iframe
-                    src="https://www.youtube.com/embed/rB8AyVQRTzE"
-                    title="YouTube video"
-                    allowfullscreen>
+                <iframe width="100%" height="315" src="https://www.youtube.com/embed/g7MEOCu9XN8"
+                    title="Biratnagar Scholarship Video Manual" frameborder="0" allowfullscreen
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture">
                 </iframe>
             </div>
         </div>

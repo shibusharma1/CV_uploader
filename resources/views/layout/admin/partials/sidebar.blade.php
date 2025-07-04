@@ -26,7 +26,7 @@
         @endif
         @endauth
         <li class="nav-item">
-            <a href="{{ url('users-list')}}" class="nav-link {{ request()->routeIs('users.*') ? 'active' : '' }}">
+            <a href="{{ url('users-list')}}" class="nav-link {{ request()->routeIs('users-list.*') ? 'active' : '' }}">
                 <i class="bi bi-people"></i>
                 Users
             </a>

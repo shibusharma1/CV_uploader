@@ -364,8 +364,10 @@ class ApplicantController extends Controller
     }
 
     // Delete applicant and related address/documents (cascade handled by DB)
-    public function destroy(User $applicant)
+    public function destroy(Applicant $applicant)
     {
+        // Optional: delete related user/documents if needed
+
         $applicant->delete();
 
         return redirect()->route('applicants.index')->with('success', 'Applicant deleted successfully.');
@@ -381,7 +383,9 @@ class ApplicantController extends Controller
 
         $applicant = Applicant::with('user')->where('user_id', $id)->firstOrFail();
 
-        $user = auth()->user();
+
+        // $user = auth()->user();
+        $user = User::find($id);
 
         if (!$applicant) {
             return redirect()->back()->with('error', 'You haven\'t applied yet. Please apply first.');

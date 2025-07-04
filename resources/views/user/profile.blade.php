@@ -7,16 +7,16 @@
 
             {{-- Success and Error Messages --}}
             @if(session('success'))
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    {{ session('success') }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                {{ session('success') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
             @endif
             @if(session('error'))
-                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    {{ session('error') }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                {{ session('error') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
             @endif
 
             <div class="card border-0 shadow-sm">
@@ -30,10 +30,8 @@
 
                         <!-- User Photo with Change Button -->
                         <div class="text-center mb-4">
-                            <img src="{{ $user->image ?? asset('Biratnagar_logo.png') }}" 
-                                 alt="User Photo"
-                                 class="rounded-circle shadow-sm border border-2 border-light" 
-                                 width="120" height="120">
+                            <img src="{{ $user->image ?? asset('Biratnagar_logo.png') }}" alt="User Photo"
+                                class="rounded-circle shadow-sm border border-2 border-light" width="120" height="120">
                             <div class="mt-2">
                                 <label class="btn btn-sm btn-outline-secondary">
                                     Change Photo <input type="file" name="image" class="d-none">
@@ -45,38 +43,65 @@
                         <!-- Name -->
                         <div class="mb-3">
                             <label class="form-label">Full Name (English)</label>
-                            <input type="text" name="name_en" value="{{ old('name_en', $user->name_en) }}" 
-                                   class="form-control @error('name_en') is-invalid @enderror" required>
+                            <input type="text" name="name_en" value="{{ old('name_en', $user->name_en) }}"
+                                class="form-control @error('name_en') is-invalid @enderror" required>
                             @error('name_en') <div class="invalid-feedback">{{ $message }}</div> @enderror
                         </div>
 
                         <!-- Email -->
                         <div class="mb-3">
                             <label class="form-label">Email</label>
-                            <input type="email" name="email" value="{{ old('email', $user->email) }}" 
-                                   class="form-control @error('email') is-invalid @enderror" required>
+                            <input type="email" name="email" value="{{ old('email', $user->email) }}"
+                                class="form-control @error('email') is-invalid @enderror" required>
                             @error('email') <div class="invalid-feedback">{{ $message }}</div> @enderror
                         </div>
 
                         <!-- Phone -->
                         <div class="mb-3">
                             <label class="form-label">Phone</label>
-                            <input type="text" name="phone" value="{{ old('phone', $user->phone) }}" 
-                                   class="form-control @error('phone') is-invalid @enderror">
+                            <input type="text" name="phone" value="{{ old('phone', $user->phone) }}"
+                                class="form-control @error('phone') is-invalid @enderror">
                             @error('phone') <div class="invalid-feedback">{{ $message }}</div> @enderror
                         </div>
 
                         <!-- Password -->
-                        <div class="row">
+                        {{-- <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Password</label>
-                                <input type="password" name="password" 
-                                       class="form-control @error('password') is-invalid @enderror">
+                                <input type="password" name="password"
+                                    class="form-control @error('password') is-invalid @enderror">
                                 @error('password') <div class="invalid-feedback">{{ $message }}</div> @enderror
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Confirm Password</label>
                                 <input type="password" name="password_confirmation" class="form-control">
+                            </div>
+                        </div> --}}
+
+                        <div class="row">
+                            <!-- Password -->
+                            <div class="col-md-6 mb-3 position-relative">
+                                <label class="form-label">Password</label>
+                                <input type="password" name="password" id="password"
+                                    class="form-control @error('password') is-invalid @enderror">
+                                <span class="position-absolute"
+                                    onclick="togglePassword('password', 'togglePasswordIcon')"
+                                    style="top: 38px; right: 25px; cursor: pointer;">
+                                    <i id="togglePasswordIcon" class="bi bi-eye"></i>
+                                </span>
+                                @error('password') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                            </div>
+
+                            <!-- Confirm Password -->
+                            <div class="col-md-6 mb-3 position-relative">
+                                <label class="form-label">Confirm Password</label>
+                                <input type="password" name="password_confirmation" id="confirm_password"
+                                    class="form-control">
+                                <span class="position-absolute"
+                                    onclick="togglePassword('confirm_password', 'toggleConfirmIcon')"
+                                    style="top: 38px; right: 25px; cursor: pointer;">
+                                    <i id="toggleConfirmIcon" class="bi bi-eye"></i>
+                                </span>
                             </div>
                         </div>
 
@@ -90,7 +115,7 @@
                 </div>
 
                 <div class="card-footer bg-light text-muted text-end small">
-                    Role: 
+                    Role:
                     @if($user->role == 0) Superadmin
                     @elseif($user->role == 1) Admin
                     @else User
@@ -102,4 +127,21 @@
         </div>
     </div>
 </div>
+<script>
+    function togglePassword(inputId, iconId) {
+        const input = document.getElementById(inputId);
+        const icon = document.getElementById(iconId);
+
+        if (input.type === 'password') {
+            input.type = 'text';
+            icon.classList.remove('bi-eye');
+            icon.classList.add('bi-eye-slash');
+        } else {
+            input.type = 'password';
+            icon.classList.remove('bi-eye-slash');
+            icon.classList.add('bi-eye');
+        }
+    }
+</script>
+
 @endsection
