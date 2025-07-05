@@ -11,7 +11,12 @@ class ApplicantCollegeSelection extends Model
         'priority',
         'college_id',
     ];
-
+    // public function users()
+    // {
+    //     return $this->belongsToMany(User::class, 'applicant_college_selections', 'college_id', 'user_id')
+    //                 ->withPivot('priority')
+    //                 ->withTimestamps();
+    // }
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');

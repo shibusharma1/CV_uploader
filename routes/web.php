@@ -2,7 +2,6 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\OTPController;
 use Illuminate\Support\Facades\Artisan;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
@@ -24,17 +23,12 @@ use Illuminate\Foundation\Auth\EmailVerificationRequest;
 // ===============================
 // Public Routes
 // ===============================
-
-Route::get('/debug-middleware', function () {
-    dd(app()->make(\Illuminate\Contracts\Http\Kernel::class)->getMiddlewareGroups());
-});
-
 Route::get('/clear-all', function () {
     Artisan::call('config:clear');
     Artisan::call('cache:clear');
     Artisan::call('route:clear');
     Artisan::call('view:clear');
-   
+    Artisan::call('optimize:clear');
     return 'All cache cleared!';
 });
 
@@ -45,10 +39,6 @@ Route::get('/', fn() => view('home'))->name('home');
 // Route::get('/test', fn() => view('test'));
 Route::get('/admitcard', fn() => view('admitcard'));
 Route::get('/pdf', fn() => view('pdf'));
-
-
-Route::get('/verify-otp', [OTPController::class, 'showVerifyForm'])->name('otp.verify.page');
-Route::post('/verify-otp', [OTPController::class, 'verifyOtp'])->name('otp.verify');
 
 // ===============================
 // Authentication Routes
@@ -89,7 +79,7 @@ Route::post('/email/verification-notification', function (Request $request) {
 // ===============================
 // Authenticated User/Admin Routes
 // ===============================
-Route::middleware(['auth','phone.verified'])->group(function () {
+Route::middleware(['auth'])->group(function () {
 
     // User dashboard
     Route::get('/dashboard/user', [DashboardController::class, 'user'])->name('user.dashboard');
@@ -140,7 +130,7 @@ Route::middleware(['auth','phone.verified'])->group(function () {
     Route::get('users-list/{user}', [UserController::class, 'show'])->name('users-list.show');
 
     // Edit: Show form to edit an existing user
-    Route::get('users-list/{user}/edit', [UserController::class, 'edit'])->name('users-list.edit');
+    Route::get('users-list/edit/{user}', [UserController::class, 'edit'])->name('users-list.edit');
 
     // Update: Handle PUT/PATCH to update an existing user
     Route::put('users-list/{user}', [UserController::class, 'update'])->name('users-list.update');

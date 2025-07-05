@@ -21,8 +21,6 @@ return new class extends Migration {
             $table->boolean('is_active')->default(1)->comment('1=active, 0=inactive');
 
             $table->timestamp('email_verified_at')->nullable();
-            $table->string('phone_otp')->nullable();
-            $table->timestamp('phone_verified_at')->nullable();
             $table->string('remember_token')->nullable();
             $table->timestamps();
         });

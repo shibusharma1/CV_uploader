@@ -158,19 +158,6 @@ class ApplicantController extends Controller
         // Save address related to user (assuming user->address() relation exists)
         $user->address()->create($addressData);
 
-        // $request->validate([
-        //     'see_gradesheet' => 'nullable|file|max:1024', // 1MB = 1024KB
-        //     'community_school_document' => 'nullable|file|max:1024',
-        //     'citizenship_birth_certificate' => 'nullable|file|max:1024',
-        //     'disability_id_card' => 'nullable|file|max:1024',
-        //     'dalit_janjati_recommendation' => 'nullable|file|max:1024',
-        //     'bipanna_recommendation' => 'nullable|file|max:1024',
-        //     'physical_disability_certificate' => 'nullable|file|max:1024',
-        //     'movement_related_certificate' => 'nullable|file|max:1024',
-        //     'passport_size_photo' => 'nullable|file|max:1024',
-        // ]);
-
-
         // Define file fields for document uploads
         $fileFields = [
             'see_gradesheet',
@@ -217,28 +204,41 @@ class ApplicantController extends Controller
             }
         }
 
-
-
-        // dd($request->all());
-        // Mail::to($user->email)->send(new ApplicationSuccess($user));
-        // return redirect()->route('applicants.show', $user->id)
-        //     ->with('success', 'आवेदन सफलतापूर्वक पेश गरिएको छ।');
         return redirect()->route('applicants.show', encrypt($user->id))
             ->with('success', 'आवेदन सफलतापूर्वक पेश गरिएको छ।');
-
-        // return redirect()->back()->with('success', 'Applicant created successfully.');
-
     }
 
 
-
     // Show form for editing applicant
-    public function edit($id)
+    public function edit($applicant)
     {
+
+        $user = Applicant::where('id', $applicant)->pluck('user_id')->first();
+
         $user = auth()->user();
 
+        if ($user->role == 2) {
+            abort(403, 'Unauthorized');
+        }
+
+
+        $colleges = CollegeList::all();
+        // Try to get applicant record for the logged-in user
+        $applicant = $user->applicant;
+        // Fetch only the distinct provinces
+        $provinces = ProvinceData::select('STATE_CODE', 'STATE_NAME_NEP')
+            ->distinct()
+            ->get();
+
+        // If applicant exists  
+        if ($applicant) {
+            // Fetch with relationship if needed for view
+            $applicants = Applicant::with('user')->where('user_id', auth()->id())->first();
+
+
+
         // Check ownership and fetch applicant with relationships
-        $applicant = Applicant::with('user', 'address')->where('id', $id)->where('user_id', $user->id)->firstOrFail();
+        $applicant = Applicant::with('user', 'address')->where('id', $applicant)->where('user_id', $user)->firstOrFail();
 
         $provinces = ProvinceData::select('STATE_CODE', 'STATE_NAME_NEP')->distinct()->get();
 
@@ -247,22 +247,136 @@ class ApplicantController extends Controller
 
 
 
+
     // Update applicant data + address + documents
+    // public function update(Request $request, User $user)
+    // {
+    //     // Update User table fields only if present in request
+    //     $userFields = ['name_en', 'email', 'phone', 'role'];
+    //     $userData = $request->only($userFields);
+
+    //     // Handle unique email validation (ignore current user's ID)
+    //     $request->validate([
+    //         'email' => ['required', 'email', Rule::unique('users')->ignore($user->id)]
+    //     ]);
+
+    //     // Update only the provided user fields (do not touch password)
+    //     $user->update($userData);
+
+    //     // Update Applicant table fields
+    //     $applicantFields = [
+    //         'name_ne',
+    //         'image',
+    //         'school_name',
+    //         'scholarship_group',
+    //         'dob_bs',
+    //         'dob_ad',
+    //         'gender',
+    //         'father_name',
+    //         'father_occupation',
+    //         'mother_name',
+    //         'mother_occupation',
+    //         'grandfather_name',
+    //         'grandfather_occupation',
+    //         'family_income_source',
+    //         'family_income_amount',
+    //         'see_school_type',
+    //         'desired_stream',
+    //         'see_symbol_number',
+    //         'see_gpa',
+    //         'see_school_address',
+    //     ];
+    //     $applicantData = $request->only($applicantFields);
+
+    //     // Handle image upload for applicant profile
+    //     $file = $request->file('image');
+    //     $filename = time() . '_' . $file->getClientOriginalName();
+    //     $file->move(public_path('applicants/images'), $filename);
+    //     $applicantData['image'] = 'applicants/images/' . $filename;
+
+
+    //     // Update or create applicant record
+    //     $user->applicant()->updateOrCreate(
+    //         ['user_id' => $user->id],
+    //         $applicantData
+    //     );
+
+    //     // Update Address table fields
+    //     $addressFields = [
+    //         'permanent_province',
+    //         'permanent_district',
+    //         'permanent_municipality',
+    //         'permanent_ward',
+    //         'temporary_province',
+    //         'temporary_district',
+    //         'temporary_municipality',
+    //         'temporary_ward',
+    //     ];
+    //     $addressData = $request->only($addressFields);
+
+    //     // Update or create address record
+    //     $user->address()->updateOrCreate(
+    //         ['user_id' => $user->id],
+    //         $addressData
+    //     );
+
+    //     // Update Documents table fields
+    //     $fileFields = [
+    //         'see_gradesheet',
+    //         'community_school_document',
+    //         'citizenship_birth_certificate',
+    //         'disability_id_card',
+    //         'dalit_janjati_recommendation',
+    //         'bipanna_recommendation',
+    //         'physical_disability_certificate',
+    //         'movement_related_certificate',
+    //         'passport_size_photo',
+    //     ];
+
+    //     $documentData = [];
+
+    //     foreach ($fileFields as $field) {
+    //         if ($request->hasFile($field)) {
+    //             // Remove old file if exists
+    //             if ($user->documents && $user->documents->$field) {
+    //                 $oldPath = public_path($user->documents->$field);
+    //                 if (file_exists($oldPath)) {
+    //                     unlink($oldPath);
+    //                 }
+    //             }
+
+    //             $file = $request->file($field);
+    //             $filename = time() . '_' . $field . '_' . $file->getClientOriginalName();
+    //             $file->move(public_path('applicants/documents'), $filename);
+
+    //             $documentData[$field] = 'applicants/documents/' . $filename; // Save relative path
+    //         }
+    //     }
+
+    //     // Update or create documents record
+    //     if (!empty($documentData)) {
+    //         $user->documents()->updateOrCreate(
+    //             ['user_id' => $user->id],
+    //             $documentData
+    //         );
+    //     }
+
+    //     return redirect()->route('applicants.index')->with('success', 'Applicant updated successfully.');
+    // }
+
     public function update(Request $request, User $user)
     {
-        // Update User table fields only if present in request
-        $userFields = ['name_en', 'email', 'phone', 'role'];
-        $userData = $request->only($userFields);
-
-        // Handle unique email validation (ignore current user's ID)
+        // Validate unique email
         $request->validate([
-            'email' => ['required', 'email', Rule::unique('users')->ignore($user->id)]
+            'email' => ['required', 'email', Rule::unique('users')->ignore($user->id)],
         ]);
 
-        // Update only the provided user fields (do not touch password)
+        // Step 1: Update User basic info
+        $userFields = ['name_en', 'email', 'phone', 'role'];
+        $userData = $request->only($userFields);
         $user->update($userData);
 
-        // Update Applicant table fields
+        // Step 2: Update Applicant Info
         $applicantFields = [
             'name_ne',
             'image',
@@ -287,20 +401,23 @@ class ApplicantController extends Controller
         ];
         $applicantData = $request->only($applicantFields);
 
-        // Handle image upload for applicant profile
-        $file = $request->file('image');
-        $filename = time() . '_' . $file->getClientOriginalName();
-        $file->move(public_path('applicants/images'), $filename);
-        $applicantData['image'] = 'applicants/images/' . $filename;
+        if ($request->hasFile('image')) {
+            // Remove old image
+            if ($user->applicant && $user->applicant->image) {
+                $oldImage = public_path($user->applicant->image);
+                if (file_exists($oldImage))
+                    unlink($oldImage);
+            }
 
+            $file = $request->file('image');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $file->move(public_path('applicants/images'), $filename);
+            $applicantData['image'] = 'applicants/images/' . $filename;
+        }
 
-        // Update or create applicant record
-        $user->applicant()->updateOrCreate(
-            ['user_id' => $user->id],
-            $applicantData
-        );
+        $user->applicant()->updateOrCreate(['user_id' => $user->id], $applicantData);
 
-        // Update Address table fields
+        // Step 3: Update Address
         $addressFields = [
             'permanent_province',
             'permanent_district',
@@ -312,14 +429,9 @@ class ApplicantController extends Controller
             'temporary_ward',
         ];
         $addressData = $request->only($addressFields);
+        $user->address()->updateOrCreate(['user_id' => $user->id], $addressData);
 
-        // Update or create address record
-        $user->address()->updateOrCreate(
-            ['user_id' => $user->id],
-            $addressData
-        );
-
-        // Update Documents table fields
+        // Step 4: Update Documents
         $fileFields = [
             'see_gradesheet',
             'community_school_document',
@@ -347,21 +459,27 @@ class ApplicantController extends Controller
                 $file = $request->file($field);
                 $filename = time() . '_' . $field . '_' . $file->getClientOriginalName();
                 $file->move(public_path('applicants/documents'), $filename);
-
-                $documentData[$field] = 'applicants/documents/' . $filename; // Save relative path
+                $documentData[$field] = 'applicants/documents/' . $filename;
             }
         }
 
-        // Update or create documents record
         if (!empty($documentData)) {
-            $user->documents()->updateOrCreate(
-                ['user_id' => $user->id],
-                $documentData
-            );
+            $user->documents()->updateOrCreate(['user_id' => $user->id], $documentData);
+        }
+
+        // Step 5: Update College Priorities
+        $user->collegeSelections()->detach(); // Clear old
+
+        for ($i = 1; $i <= 5; $i++) {
+            $collegeId = $request->input('priority' . $i);
+            if ($collegeId) {
+                $user->collegeSelections()->attach($collegeId, ['priority' => $i]);
+            }
         }
 
         return redirect()->route('applicants.index')->with('success', 'Applicant updated successfully.');
     }
+
 
     // Delete applicant and related address/documents (cascade handled by DB)
     public function destroy(Applicant $applicant)
@@ -453,7 +571,7 @@ class ApplicantController extends Controller
 
 
 }
-
+}
 
 
 ?>

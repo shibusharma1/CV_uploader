@@ -1,13 +1,12 @@
 <?php
 namespace App\Http\Controllers;
 
-use App\Models\User;
-use App\Helpers\SmsHelper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\User;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Auth\Events\Registered;
 
 class AuthController extends Controller
 {
@@ -58,34 +57,29 @@ class AuthController extends Controller
 
     public function register(Request $request)
     {
-    $request->validate([
-        'name_en' => ['required', 'string', 'max:255'],
-        'email' => ['required', 'email', 'unique:users,email'],
-        'phone' => ['required', 'string', 'min:6', 'unique:users,phone'],
-        'password' => ['required', 'confirmed', 'min:6'],
-    ]);
+      
+        $request->validate([
+            'name_en' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'email', 'unique:users,email'],
+            'phone' => ['required', 'string', 'min:10', 'unique:users,phone'],
+            'password' => ['required', 'confirmed', 'min:6'],
+        ]);
 
-    $otp = rand(100000, 999999);
+        $user = User::create([
+            'name_en' => $request->name_en,
+            'email' => $request->email,
+            'phone' => $request->phone,
+            'password' => Hash::make($request->password),
+            'role' => 2,
+        ]);
 
-    $user = User::create([
-        'name_en' => $request->name_en,
-        'email' => $request->email,
-        'phone' => $request->phone,
-        'password' => Hash::make($request->password),
-        'role' => 2,
-        'phone_otp' => $otp,
-    ]);
+        // event(new Registered($user)); // triggers email verification
 
-    // Send SMS using the integrated API
-    try {
-        SmsHelper::sendSms($user->phone, "Your verification OTP is: $otp");
-    } catch (\Exception $e) {
-        return back()->with('error', 'Failed to send OTP. ' . $e->getMessage());
+        // auth()->login($user);
+        return view('auth.login');
+
+        // return redirect(route('verification.notice'));
     }
-
-    auth()->login($user);
-    return redirect()->route('otp.verify.page')->with('message', 'Please verify your phone number via OTP.');
-}
 
     public function logout(Request $request)
     {

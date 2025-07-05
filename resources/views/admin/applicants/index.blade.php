@@ -101,14 +101,13 @@
                             <td>{{ $applicant->created_at->format('d M Y') }}</td>
                             <td>
                                 <a href="{{ route('applicants.show', encrypt($applicant->user->id)) }}" target="_blank"
-                                    class="btn btn-sm btn-info">View</a>
-                                        {{-- <form action="{{ route('applicants.destroy', $applicant) }}" method="POST"
-                                        class="d-inline delete-form">
-                                        @csrf @method('DELETE')
-                                        <button type="button" class="btn btn-sm btn-danger delete-btn">Delete</button>
-                                    </form> --}}
+                                    class="btn btn-sm btn-info"><i class="bi bi-eye"></i></a>
+
+                                       <a href="{{ route('applicants.edit', $applicant->id) }}" target="_blank"
+                                    class="btn btn-sm btn-warning"><i class="bi bi-pencil-square"></i></a>
+
                                     <a href="{{ route('applicants.delete-applicant', $applicant->id) }}"
-   class="btn btn-sm btn-danger delete-btn">Delete</a>
+                                         class="btn btn-sm btn-danger delete-btn"><i class="bi bi-trash-fill"></i></a>
                             </td>
                         </tr>
                         @empty
@@ -122,9 +121,6 @@
                 <div class="p-3">
                     {{ $applicants->links('pagination::bootstrap-5') }}
                 </div>
-            {{-- <div class="card-footer">
-                {{ $applicants->links() }}
-            </div> --}}
         </div>
     </div>
 </div>

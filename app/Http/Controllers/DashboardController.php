@@ -60,8 +60,7 @@ class DashboardController extends Controller
         // Check if role is 0 or 1
         if (auth()->user()->role != 2) {
             return redirect()->back()->with('error', 'Unauthorized access.');
-        }else{
-        return view('user.dashboard', ['user' => Auth::user()]);
         }
+        return view('user.dashboard', ['user' => Auth::user()]);
     }
 }

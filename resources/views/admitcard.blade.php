@@ -19,14 +19,6 @@
         }
 
         .printable-form-container {
-            /* background-color: #ffffff;
-            padding: 7mm 7mm;
-            border: 1px solid #000000;
-            width: 210mm;
-            min-height: 297mm;
-            box-sizing: border-box;
-            margin: 2mm auto; */
-
             width: 210mm;
             min-height: 297mm;
             padding: 20mm;

@@ -6,10 +6,12 @@ namespace App\Models;
 use App\Models\ApplicantAddress;
 use App\Models\ApplicantDocuments;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class User extends Authenticatable
+class User extends Authenticatable implements MustVerifyEmail
+    // class User extends Authenticatable implements MustVerifyEmail
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
@@ -25,18 +27,6 @@ class User extends Authenticatable
         'is_active',
     ];
 
-    public function hasVerifiedPhone()
-    {
-        return !is_null($this->phone_verified_at);
-    }
-
-    public function markPhoneAsVerified()
-    {
-        $this->phone_verified_at = now();
-        $this->otp_code = null;
-        $this->save();
-    }
-
     public function applicant()
     {
         return $this->hasOne(Applicant::class);
@@ -50,7 +40,7 @@ class User extends Authenticatable
     {
         return $this->hasOne(ApplicantDocuments::class, 'user_id');
     }
-
+    
     public function collegeSelections()
     {
         return $this->belongsToMany(CollegeList::class, 'applicant_college_selections', 'user_id', 'college_id')

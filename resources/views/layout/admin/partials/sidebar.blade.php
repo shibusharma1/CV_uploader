@@ -1,10 +1,10 @@
 <!-- Sidebar -->
 <nav id="sidebar">
-    <div class="sidebar-header">
-        <div class="app-logo">
+    <div class="sidebar-header d-flex flex-row align-items-center justify-content-between text-center" style="background: #F5F7FB;">
+        <div class="app-logo d-flex flex-row align-items-center">
             {{-- <i class="bi bi-file-earmark-person"></i> --}}
-            <img src="{{ asset('Biratnagar_logo.png') }}" alt="Logo" class="logo" height=30 width="30">
-            <h3 class="px-3">Biratnagar</h3>
+            <img src="{{ asset('Biratnagar_logo.png') }}" alt="Logo" class="logo" height="30" width="30">
+            <h5 class="px-3 mb-0">BRT Scholarship</h5>
         </div>
     </div>
 

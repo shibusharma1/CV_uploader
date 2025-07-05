@@ -9,10 +9,20 @@
 @endif
 <div id="content">
     <div class="content-wrapper p-4">
-        <div class="page-header d-flex justify-content-between align-items-center mb-3">
-            <h2 class="page-title">Manage Users</h2>
+        {{-- <div class="page-header d-flex justify-content-between align-items-center mb-3">
+            <h2 class="page-title">Manage Users</h2> --}}
             {{-- <a href="{{ route('users.create') }}" class="btn btn-primary">Add User</a> --}}
+            {{--
+        </div> --}}
+        <div class="page-header d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+            <h2 class="page-title m-0">Manage Users</h2>
+            <form action="{{ route('users-list.index') }}" method="GET" class="d-flex gap-2">
+                <input type="text" name="search" class="form-control form-control-sm p-2"
+                    placeholder="Search by name, email, or phone" value="{{ request('search') }}">
+                <button type="submit" class="btn btn-sm btn-primary">Search</button>
+            </form>
         </div>
+
 
         <div class="card shadow-sm border-0 rounded-3 my-4">
             <div class="card-header fw-semibold">
@@ -58,15 +68,10 @@
                                 <td class="d-flex justify-content-center gap-2">
                                     <a href="{{ url('users-list/show', $user->id) }}" class="btn btn-sm btn-info d-none"
                                         title="View"><i class="bi bi-eye"></i></a>
-                                    <a href="{{ url('users-list/edit', $user->id) }}"
-                                        class="btn btn-sm btn-warning d-none" title="Edit"><i
-                                            class="bi bi-pencil-square"></i></a>
-                                    {{-- <form action="{{ url('users-list/destroy', $user->id) }}" method="POST"
-                                        class="delete-form d-inline">
-                                        @csrf @method('DELETE')
-                                        <button type="button" class="btn btn-sm btn-danger delete-btn" title="Delete"><i
-                                                class="bi bi-trash-fill"></i></button>
-                                    </form> --}}
+
+                                    <a href="{{ route('users-list.edit', $user->id) }}" class="btn btn-sm btn-warning"
+                                        title="Edit"><i class="bi bi-pencil-square"></i></a>
+
                                     <a href="{{ route('users-list.destroy', $user->id) }}"
                                         class="btn btn-sm btn-danger delete-btn" data-user-name="{{ $user->name }}"
                                         data-delete-url="{{ route('users-list.destroy', $user->id) }}" title="Delete">
@@ -94,7 +99,8 @@
     </div>
 </div>
 <script>
-// <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    // <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11">
+</script>
 <script>
     document.querySelectorAll('.delete-btn').forEach(button => {
         button.addEventListener('click', function(e) {

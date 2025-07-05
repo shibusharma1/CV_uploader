@@ -7,11 +7,30 @@ use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
-    public function index()
-    {
-        $users = User::orderBy('id', 'desc')->paginate(10); // 10 per page
-        return view('admin.users.index', compact('users'));
+    // public function index()
+    // {
+    //     $users = User::orderBy('id', 'desc')->paginate(10); // 10 per page
+    //     return view('admin.users.index', compact('users'));
+    // }
+    public function index(Request $request)
+{
+    $query = User::query();
+
+    if ($request->filled('search')) {
+        $searchTerm = $request->search;
+
+        $query->where(function ($q) use ($searchTerm) {
+            $q->where('name_en', 'like', "%{$searchTerm}%")
+              ->orWhere('email', 'like', "%{$searchTerm}%")
+              ->orWhere('phone', 'like', "%{$searchTerm}%");
+        });
     }
+
+    $users = $query->orderBy('id', 'desc')->paginate(10);
+
+    return view('admin.users.index', compact('users'));
+}
+
 
     public function create()
     {
@@ -43,6 +62,7 @@ class UserController extends Controller
 
     public function edit(User $user)
     {
+      
         return view('admin.users.edit', compact('user'));
     }
 
@@ -50,24 +70,20 @@ class UserController extends Controller
     {
         $request->validate([
             'name_en' => 'required|string',
-            'email' => 'required|email|unique:users,email,' . $user->id,
+            'email' => 'required|email|unique:users,email,' . $user->id,            
         ]);
 
         $user->update([
             'name_en' => $request->name_en,
             'email' => $request->email,
             'phone' => $request->phone,
-            'is_active' => $request->is_active,
+            'is_active' => 1,
+            'password' => $request->password,
         ]);
 
-        return redirect()->route('users.index')->with('success', 'User updated successfully.');
+        return redirect()->route('users-list.index')->with('success', 'User updated successfully.');
     }
 
-    // public function destroy(User $user)
-    // {
-    //     $user->delete();
-    //     return redirect()->route('users.index')->with('success', 'User deleted successfully.');
-    // }
     public function destroy($id)
     {
         $user = User::findOrFail($id);

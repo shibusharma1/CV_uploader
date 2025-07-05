@@ -22,7 +22,7 @@
         <!-- Page Header -->
         <div class="page-header d-flex justify-content-between align-items-center mb-3">
             <h2 class="page-title m-0">Manage Admins</h2>
-            <a href="{{ route('admins.create') }}" class="btn btn-primary">Add</a>
+            <a href="{{ route('admins.create') }}" class="btn btn-primary"><i class="bi bi-plus"></i> Add</a>
         </div>
 
         {{-- <h3 class="mb-3"></h3> --}}
@@ -54,10 +54,11 @@
                     </tr>
                 </thead>
                 <tbody>
+                    @php $serial = 0; @endphp
                     @forelse($admins as $index => $user)
                         @if($user->role == 0 || $user->role == 1)
                             <tr class="text-center">
-                                <td>{{ $index + 1 }}</td>
+                                <td>{{ ++$serial }}</td>
                                 <td class="text-start">{{ $user->name_en }}</td>
                                 {{-- <td class="text-start">{{ $user->name_ne }}</td> --}}
                                 <td><a href="mailto:{{ $user->email }}" class="text-decoration-none">{{ $user->email }}</a></td>
@@ -69,9 +70,10 @@
                                 </td>
                                 <td>
                                     @if($user->image)
-                                        <img src="{{ asset($user->image) }}" alt="User image" class="rounded-circle shadow-sm" width="50" height="50" style="object-fit: cover;">
+                                        <img src="{{ asset($user->image) }}" alt="User image" class="rounded-circle shadow-sm" width="32" height="32" style="object-fit: cover;">
                                     @else
-                                        <span class="text-muted small">No image</span>
+                                         <img src="{{ asset('Biratnagar_logo.png') }}" alt="{{ Auth::user()->name_en }}"
+                            class="rounded-circle me-2" width="32" height="32">
                                     @endif
                                 </td>
                                 <td class="d-flex justify-content-center gap-2">

@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class CollegeList extends Model
 {
-    use HasFactory;
+        use HasFactory;
 
     protected $fillable = [
         'serial_no',
@@ -19,10 +19,10 @@ class CollegeList extends Model
         'contact_number',
         'email',
     ];
-    public function users()
+        public function users()
     {
         return $this->belongsToMany(User::class, 'applicant_college_selections', 'college_id', 'user_id')
-            ->withPivot('priority')
-            ->withTimestamps();
+                    ->withPivot('priority')
+                    ->withTimestamps();
     }
 }
