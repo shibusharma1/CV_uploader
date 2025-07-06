@@ -76,7 +76,12 @@ class AuthController extends Controller
         // event(new Registered($user)); // triggers email verification
 
         // auth()->login($user);
-        return view('auth.login');
+        // return view('auth.login');
+         Auth::login($user);
+        $user->sendPhoneOtp();
+
+
+        return redirect()->route('verification.phone');
 
         // return redirect(route('verification.notice'));
     }

@@ -10,6 +10,7 @@ use App\Http\Controllers\SettingController;
 use App\Http\Controllers\ApplicantController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ForgotPasswordController;
+use App\Http\Controllers\PhoneVerificationController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 
 /*
@@ -40,10 +41,7 @@ Route::get('/', fn() => view('home'))->name('home');
 Route::get('/admitcard', fn() => view('admitcard'));
 Route::get('/pdf', fn() => view('pdf'));
 
-// ===============================
 // Authentication Routes
-// ===============================
-
 // Login
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
@@ -53,49 +51,34 @@ Route::middleware('guest')->group(function () {
     Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('register');
     Route::post('/register', [AuthController::class, 'register']);
 });
-
 // Logout
 Route::get('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth');
-// ===============================
-// Email Verification Routes
-// ===============================
-// Show verification notice
-Route::get('/email/verify', fn() => view('auth.verify-email'))
-    ->middleware('auth')
-    ->name('verification.notice');
 
-// Handle email verification
-Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
-    $request->fulfill();
-    return redirect('/dashboard/user');
-})->middleware(['auth', 'signed'])->name('verification.verify');
+// Forgot Password Custom OTP Flow
+Route::get('/forgot-password', [ForgotPasswordController::class, 'showPhoneOrEmailForm'])->name('forgot.password');
+Route::post('/forgot-password/send-otp', [ForgotPasswordController::class, 'sendOtp'])->name('forgot.password.sendOtp');
+Route::get('/forgot-password/verify-otp', [ForgotPasswordController::class, 'showVerifyOtpForm'])->name('forgot.password.verifyForm');
+Route::post('/forgot-password/verify-otp', [ForgotPasswordController::class, 'verifyOtp'])->name('forgot.password.verifyOtp');
+Route::get('/forgot-password/reset', [ForgotPasswordController::class, 'showResetForm'])->name('forgot.password.resetForm');
+Route::post('/forgot-password/reset', [ForgotPasswordController::class, 'resetPassword'])->name('forgot.password.reset');
 
-// Resend verification link
-Route::post('/email/verification-notification', function (Request $request) {
-    $request->user()->sendEmailVerificationNotification();
-    return back()->with('message', 'Verification link sent!');
-})->middleware(['auth', 'throttle:6,1'])->name('verification.send');
-
-// ===============================
 // Authenticated User/Admin Routes
-// ===============================
 Route::middleware(['auth'])->group(function () {
-
+    // Routes to verify Phone number
+     Route::get('/verify-phone', [PhoneVerificationController::class, 'show'])->name('verification.phone');
+    Route::post('/verify-phone', [PhoneVerificationController::class, 'verify'])->name('verification.phone.submit');
+    Route::post('/send-otp', [PhoneVerificationController::class, 'sendOtp'])->name('verification.phone.send');
+    Route::middleware(['phone.verified'])->group(function () {
     // User dashboard
     Route::get('/dashboard/user', [DashboardController::class, 'user'])->name('user.dashboard');
-
     // Admin dashboard
     Route::get('/dashboard/admin', [DashboardController::class, 'admin'])->name('admin.dashboard');
-
     // Admin Management
     Route::resource('admins', AdminController::class);
-
     // Application Settings
     Route::get('/settings-list', [SettingController::class, 'edit'])->name('settings.edit');
     Route::post('/settings-update', [SettingController::class, 'update'])->name('settings.update');
-    // ===============================
-// Applicants Management Routes
-// ===============================
+    // Applicants Management Routes
     Route::prefix('applicants')->name('applicants.')->group(function () {
         Route::get('/applicant-list', [ApplicantController::class, 'index'])->name('index');              // List applicants
         Route::get('/create', [ApplicantController::class, 'create'])->name('create');      // Show create form
@@ -114,9 +97,8 @@ Route::middleware(['auth'])->group(function () {
         Route::patch('/{id}/toggle-status', [ApplicantController::class, 'toggleStatus'])->name('toggle-status');
         Route::patch('/{id}/admin-toggle-status', [ApplicantController::class, 'adminToggleStatus'])->name('admin-toggle-status');
     });
-    // ===============================
+
     // User Management Routes
-    // ===============================
     // Index: List all users
     Route::get('users-list', [UserController::class, 'index'])->name('users-list.index');
 
@@ -139,25 +121,13 @@ Route::middleware(['auth'])->group(function () {
     // Destroy: Delete a specific user (if you're using GET method for delete)
     Route::get('users-list/destroy/{user}', [UserController::class, 'destroy'])->name('users-list.destroy');
 
-
-
     // Toggle user status (e.g., activate/deactivate)
     Route::patch('users/{user}/toggle-status', [UserController::class, 'toggleStatus'])->name('users.toggle-status');
     // User profile
     Route::get('/profile', [UserController::class, 'profile'])->name('profile');
     Route::post('/profile/update', [UserController::class, 'updateProfile'])->name('profile.update');
 });
-
-
-// forget password
-Route::get('/forgot-password', [ForgotPasswordController::class, 'showEmailForm'])->name('forgot.password.form');
-Route::post('/forgot-password/send-otp', [ForgotPasswordController::class, 'sendOtp'])->name('forgot.password.sendOtp');
-
-Route::get('/verify-otp', [ForgotPasswordController::class, 'showOtpForm'])->name('forgot.password.otpForm');
-Route::post('/verify-otp', [ForgotPasswordController::class, 'verifyOtp'])->name('forgot.password.verifyOtp');
-
-Route::get('/reset-password', [ForgotPasswordController::class, 'showResetForm'])->name('forgot.password.resetForm');
-Route::post('/reset-password', [ForgotPasswordController::class, 'resetPassword'])->name('forgot.password.reset');
+});
 
 // Fallback page
 Route::fallback(function () {

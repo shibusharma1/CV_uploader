@@ -1,88 +1,91 @@
-<?php 
+<?php
+
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Session;
-use Illuminate\Support\Facades\Hash;
 use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Session;
 
 class ForgotPasswordController extends Controller
 {
-    // Show email input form
-    public function showEmailForm()
+    public function showPhoneOrEmailForm()
     {
         return view('auth.forgot-password');
     }
 
-    // Send OTP to email
     public function sendOtp(Request $request)
     {
         $request->validate([
-            'email' => 'required|email|exists:users,email',
+            'identifier' => 'required'
         ]);
 
-        $otp = rand(100000, 999999);
-        Session::put('otp', $otp);
-        Session::put('email', $request->email);
+        $user = User::where('email', $request->identifier)
+            ->orWhere('phone', $request->identifier)
+            ->first();
 
-        Mail::raw("Your OTP is: $otp", function ($message) use ($request) {
-            $message->to($request->email)
-                ->subject('Password Reset OTP');
-        });
+        if (!$user) {
+            return back()->withErrors(['identifier' => 'No account found with that email or phone.']);
+        }
+        $user->sendPhoneOtp();
 
-        return redirect()->route('forgot.password.otpForm')->with('success', 'OTP sent to your email.');
+
+        return redirect()->route('forgot.password.verifyForm')->with('success', 'OTP sent successfully.');
     }
 
-    // Show OTP form
-    public function showOtpForm()
+    public function showVerifyOtpForm()
     {
         return view('auth.verify-otp');
     }
 
-    // Verify OTP
     public function verifyOtp(Request $request)
     {
         $request->validate([
-            'otp' => 'required|numeric',
+            'otp' => 'required|digits:6'
         ]);
 
-        if ($request->otp == Session::get('otp')) {
-            return redirect()->route('forgot.password.resetForm')->with('success', 'OTP verified. You can now reset your password.');
+        $user = User::find(Session::get('otp_user_id'));
+
+        if (
+            !$user ||
+            $user->phone_verification_code != $request->otp ||
+            now()->greaterThan($user->phone_verification_expires_at)
+        ) {
+            return back()->withErrors(['otp' => 'Invalid or expired OTP.']);
         }
 
-        return back()->with('error', 'Invalid OTP.');
+        // Clear OTP
+        $user->phone_verification_code = null;
+        $user->phone_verification_expires_at = null;
+        $user->save();
+
+        Session::put('password_reset_user_id', $user->id);
+        return redirect()->route('forgot.password.resetForm');
     }
 
-    // Show password reset form
     public function showResetForm()
     {
-        if (!Session::has('email')) {
-            return redirect()->route('forgot.password.form');
-        }
-
         return view('auth.reset-password');
     }
 
-    // Reset the password
     public function resetPassword(Request $request)
     {
         $request->validate([
             'password' => 'required|min:6|confirmed',
         ]);
 
-        $user = User::where('email', Session::get('email'))->first();
+        $user = User::find(Session::get('password_reset_user_id'));
 
-        if ($user) {
-            $user->password = Hash::make($request->password);
-            $user->save();
-
-            Session::forget(['otp', 'email']);
-
-            return redirect()->route('login')->with('success', 'Password reset successfully.');
+        if (!$user) {
+            return redirect()->route('forgot.password')->withErrors(['error' => 'Session expired. Try again.']);
         }
 
-        return back()->with('error', 'Something went wrong.');
+        $user->password = Hash::make($request->password);
+        $user->save();
+
+        Session::forget(['otp_user_id', 'password_reset_user_id']);
+
+        return redirect()->route('login')->with('success', 'Password reset successfully.');
     }
 }

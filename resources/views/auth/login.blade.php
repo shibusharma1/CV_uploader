@@ -44,7 +44,7 @@
                 </form>
 
                 <p class="auth-link mt-3">Don't have an account? <a href="{{ route('register') }}">Register here</a></p>
-                <p class="auth-link mt-2"><a href="#">Forgot password?</a></p>
+                <p class="auth-link mt-2"><a href="{{ route('forgot.password')}}">Forgot password?</a></p>
             </div>
         </div>
     </div>
