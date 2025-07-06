@@ -1,27 +1,58 @@
-<!DOCTYPE html>
-<html lang="en">
+@extends('layout.app')
+@section('title', 'Verify Phone Number')
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
-</head>
+@section('content')
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 80vh;">
+    <div class="card shadow-lg p-4 rounded-4" style="max-width: 450px; width: 100%;">
+        <h4 class="text-center text-primary fw-bold mb-4">Verify Your Phone Number</h4>
 
-<body>
+        {{-- Success Message --}}
+        @if(session('success'))
+            <div class="alert alert-success text-center" role="alert">
+                {{ session('success') }}
+            </div>
+        @endif
 
+        {{-- Error Message --}}
+        @if(session('error'))
+            <div class="alert alert-danger text-center" role="alert">
+                {{ session('error') }}
+            </div>
+        @endif
 
-@if(session('success'))<div>{{ session('success') }}</div>@endif
-<form action="{{ route('verification.phone.submit') }}" method="POST">
-    @csrf
-    <input name="otp" placeholder="Enter OTP" required>
-    <button type="submit">Verify</button>
-</form>
-<form action="{{ route('verification.phone.send') }}" method="POST" class="mt-2">
-    @csrf
-    <button type="submit">Resend OTP</button>
-</form>
+        {{-- OTP Verification Form --}}
+        <form action="{{ route('verification.phone.submit') }}" method="POST">
+            @csrf
+            <div class="mb-3">
+                <label for="otp" class="form-label fw-semibold">Enter OTP</label>
+                <input type="text" 
+                       name="otp" 
+                       id="otp" 
+                       class="form-control rounded-pill px-4 py-2 @error('otp') is-invalid @enderror" 
+                       placeholder="One-Time Password" 
+                       required>
 
-</body>
+                @error('otp')
+                    <small class="text-danger">{{ $message }}</small>
+                @enderror
+            </div>
 
-</html>
+            <div class="d-grid">
+                <button type="submit" class="btn btn-success rounded-pill py-2 fw-semibold">
+                    Verify Phone
+                </button>
+            </div>
+        </form>
+
+        {{-- Resend OTP --}}
+        <form action="{{ route('verification.phone.send') }}" method="POST" class="mt-3">
+            @csrf
+            <div class="d-grid">
+                <button type="submit" class="btn btn-outline-primary rounded-pill py-2 fw-semibold">
+                    Resend OTP
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+@endsection
